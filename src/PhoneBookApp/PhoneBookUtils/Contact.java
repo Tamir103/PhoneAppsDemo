@@ -15,72 +15,33 @@ public class Contact {
 
 
     /**
-     * Setting contact first name and validating the use of english letters
-     * In this case name is limited to 20 characters
+     * Setting contact first name
      * @param firstName - set contact first name
-     * @throws IllegalArgumentException if input invalid
      */
     public void setFirstName(String firstName) {
-//        int charLimit = 20;
-//        String validatedName = validateName(firstName, charLimit);
-//        if (!validatedName.equals("2")) {
-//            if (!validatedName.equals("1")) {
-//                this.firstName = validatedName;
-//            } else {
-//                throw new ArithmeticException("First name length invalid");
-//            }
-//        } else {
-//            throw new IllegalArgumentException("First name input is invalid");
-//        }
         this.firstName = firstName;
     }
 
     /**
-     * Setting contact middle name and validating the use of english letters
-     * In this case name is limited to 20 characters
+     * Setting contact middle name
      * @param middleName - set contact middle name
-     * @throws IllegalArgumentException if input invalid
      */
     public void setMiddleName(String middleName) {
-//        int charLimit = 20;
-//        String validatedName = validateName(middleName, charLimit);
-//        if (!validatedName.equals("2")) {
-//            if (!validatedName.equals("1")) {
-//                this.middleName = validatedName;
-//            } else {
-//                throw new ArithmeticException("Middle name length invalid");
-//            }
-//        } else {
-//            throw new IllegalArgumentException("Middle name input is invalid");
-//        }
         this.middleName = middleName;
     }
 
     /**
-     * Setting contact last name and validating the use of english letters
-     * In this case name is limited to 20 characters
+     * Setting contact last name
      * @param lastName - set contact last name
-     * @throws IllegalArgumentException if input invalid
+
      */
     public void setLastName(String lastName) {
-//        int charLimit = 20;
-//        String validatedName = validateName(lastName, charLimit);
-//        if (!validatedName.equals("2")) {
-//            if (!validatedName.equals("1")) {
-//                this.lastName = validatedName;
-//            } else {
-//                throw new ArithmeticException("Last name length invalid");
-//            }
-//        } else {
-//            throw new IllegalArgumentException("Last name input is invalid");
-//        }
         this.lastName = lastName;
     }
 
     /**
-     * Setting contact company name and validating the limited 20 characters
+     * Setting contact company name
      * @param companyName - set contact company name
-     * @throws IllegalArgumentException if input invalid
      */
     public void setCompanyName(String companyName) {
         int charLimit = 20;

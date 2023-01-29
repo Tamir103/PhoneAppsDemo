@@ -1,6 +1,7 @@
 package SmsApp;
 
-import PhoneBookApp.PhoneBookUtils.validations;
+import PhoneBookApp.PhoneBookUtils.Contact;
+import PhoneBookApp.PhoneBookUtils.setContact;
 
 import java.util.Scanner;
 
@@ -16,11 +17,9 @@ public class testRunClass {
 
 
 
-        Scanner scan = new Scanner(System.in);
-        String firstName = scan.nextLine();
-        String middleName = scan.nextLine();
-        String lastName = scan.nextLine();
-
+        setContact validate = new setContact();
+        Contact contact = validate.setContactFullName();
+        System.out.println(contact.getFullName());
 
     }
 }

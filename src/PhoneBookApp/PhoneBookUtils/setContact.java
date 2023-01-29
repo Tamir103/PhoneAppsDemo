@@ -1,39 +1,81 @@
 package PhoneBookApp.PhoneBookUtils;
 
-public class validations {
+import java.util.Scanner;
+
+public class setContact {
 
     static int limitNumOfChars = 20;
     static final String OK = "OK";
     static final String FAIL = "FAIL";
+    static Scanner scan = new Scanner(System.in);
 
     /**
      * Setting Contact full name
-     * @param firstName - Contact first name
-     * @param middleName - Contact middle name
-     * @param lastName - Contact last name
-     * @return OK if contact name set properly, FAIL if not
+     * @throws NullPointerException if first name is invalid
+     * @return contact object with full name set
      */
-    public String setContactFullName(String firstName, String middleName, String lastName) {
+    public Contact setContactFullName() {
+        String firstName, middleName, lastName, result = FAIL;
         Contact contact = new Contact();
-        String result = FAIL;
-        if (isNameValid(firstName)) {
+        firstName = namePerTypeInput("FirstName");
+        if (isNamePerTypeValid("First Name", firstName)) {
             contact.setFirstName(firstName);
             result = OK;
-        } else {
-            System.err.println("First name must be valid");
-            result = FAIL;
         }
-        if (isNameValid(middleName)) {
+        if (result.equals(FAIL)) {
+            System.err.println("UNABLE TO SET CONTACT DETAILS, FIRST NAME IS MANDATORY");
+            return null;
+        }
+        middleName = namePerTypeInput("MiddleName");
+        if (isNamePerTypeValid("Middle Name", middleName)) {
             contact.setMiddleName(middleName);
-            result = OK;
         }
-        if (isNameValid(lastName)) {
+        lastName = namePerTypeInput("LastName");
+        if (isNamePerTypeValid("Last Name", lastName)) {
             contact.setLastName(lastName);
-            result = OK;
         }
-        return result;
+
+
+        return contact;
     }
 
+    private boolean isNamePerTypeValid(String nameType, String name) {
+        if (!name.equals(FAIL)) {
+            return true;
+        } else {
+            System.err.println("Invalid " + nameType + ", unable to set");
+            return false;
+        }
+    }
+
+    /**
+     * Prompting the user and receiving input from scanner
+     * @param inputType First Name, Middle Name, Last Name, Company Name, Phone Number
+     * @return User input if valid, "middle" if middle name invalid, FAIL if input invalid
+     */
+    private String namePerTypeInput(String inputType) {
+        String input;
+        for (int i = 0; i < 3; i++) {
+            System.out.println("Enter contact " + inputType);
+            input = scan.nextLine();
+            if (!inputType.equals("middleName")) {
+                if(isNameValid(input) && !(inputType.equals("PhoneNumber") || inputType.equals("CompanyName"))) {
+                    return input;
+                } else if (inputType.equals("PhoneNumber")) {
+                    //TODO copy phone number validation methods, and use them here
+                } else if (inputType.equals("CompanyName")) {
+                    //TODO decide what validation are necessary, write and use them
+                }
+            } else {
+                if (isNameValid(input)) {
+                    return input;
+                } else {
+                    return "middle";
+                }
+            }
+        }
+        return FAIL;
+    }
     private boolean isNameValid(String name) {
         String validatedName = validateName(name);
         if (name.equals(validatedName)) {
@@ -44,8 +86,6 @@ public class validations {
         } else if (validatedName.equals("2")) {
             System.err.println("Name can contain english letters only");
             return false;
-        } else if (validatedName.equals("") || validatedName == null) { //TODO maybe remove this because of middle name not mandatory
-            System.err.println("Name is empty");
         }
         return false;
     }
