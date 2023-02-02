@@ -18,8 +18,10 @@ public class testRunClass {
 
 
         setContact validate = new setContact();
-        Contact contact = validate.setContactFullName();
+        Contact contact = validate.setContactFullInfo();
         System.out.println(contact.getFullName());
+        System.out.println(contact.getCompanyName());
+        System.out.println(contact.getPhoneNumber());
 
     }
 }

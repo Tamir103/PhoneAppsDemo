@@ -14,10 +14,10 @@ public class setContact {
      * @throws NullPointerException if first name is invalid
      * @return contact object with full name set
      */
-    public Contact setContactFullName() {
-        String firstName, middleName, lastName, result = FAIL;
+    public Contact setContactFullInfo() {
+        String firstName, middleName, lastName, phoneNumber, companyName, result = FAIL;
         Contact contact = new Contact();
-        firstName = namePerTypeInput("FirstName");
+        firstName = infoPerTypeInput("First Name");
         if (isNamePerTypeValid("First Name", firstName)) {
             contact.setFirstName(firstName);
             result = OK;
@@ -26,15 +26,19 @@ public class setContact {
             System.err.println("UNABLE TO SET CONTACT DETAILS, FIRST NAME IS MANDATORY");
             return null;
         }
-        middleName = namePerTypeInput("MiddleName");
-        if (isNamePerTypeValid("Middle Name", middleName)) {
+        middleName = infoPerTypeInput("Middle Name");
+        if (isNamePerTypeValid("Middle Name", middleName) && !middleName.equals("middle")) {
             contact.setMiddleName(middleName);
         }
-        lastName = namePerTypeInput("LastName");
+
+        lastName = infoPerTypeInput("Last Name");
         if (isNamePerTypeValid("Last Name", lastName)) {
             contact.setLastName(lastName);
         }
-
+        companyName = infoPerTypeInput("Company Name");
+        if (isNamePerTypeValid("Company Name", companyName)) {
+            contact.setCompanyName(companyName);
+        }
 
         return contact;
     }
@@ -53,22 +57,26 @@ public class setContact {
      * @param inputType First Name, Middle Name, Last Name, Company Name, Phone Number
      * @return User input if valid, "middle" if middle name invalid, FAIL if input invalid
      */
-    private String namePerTypeInput(String inputType) {
+    private String infoPerTypeInput(String inputType) {
         String input;
         for (int i = 0; i < 3; i++) {
-            System.out.println("Enter contact " + inputType);
-            input = scan.nextLine();
-            if (!inputType.equals("middleName")) {
-                if(isNameValid(input) && !(inputType.equals("PhoneNumber") || inputType.equals("CompanyName"))) {
+            input = userInputString("Enter contact " + inputType);
+            if (!inputType.equals("Middle Name")) {
+                if(inputType.equals("Company Name")) {
+                    if (numOfCharsRestriction(input, limitNumOfChars)) {
+                        return input;
+                    }
+                } else if (inputType.equals("Phone Number")) {
+                    //TODO copy phone number validation methods, and use them here, use setPhoneNumber as example
+
+                } else if(isNameValid(input)) {
                     return input;
-                } else if (inputType.equals("PhoneNumber")) {
-                    //TODO copy phone number validation methods, and use them here
-                } else if (inputType.equals("CompanyName")) {
-                    //TODO decide what validation are necessary, write and use them
                 }
             } else {
-                if (isNameValid(input)) {
-                    return input;
+                if (!input.equals("") && !(input == null)) {
+                    if (isNameValid(input)) {
+                        return input;
+                    }
                 } else {
                     return "middle";
                 }
@@ -76,6 +84,18 @@ public class setContact {
         }
         return FAIL;
     }
+
+    private String userInputString(String promptMessage) {
+        System.out.println(promptMessage);
+        return scan.nextLine();
+    }
+
+    /**
+     * Validate name using the validateName method
+     * Prints Name too long and english letters restriction errors
+     * @param name - Name to be validated
+     * @return true if name is valid, false if not
+     */
     private boolean isNameValid(String name) {
         String validatedName = validateName(name);
         if (name.equals(validatedName)) {
@@ -152,5 +172,110 @@ public class setContact {
         }
     }
 
+
+
+    /**
+     * Clean, validate and parse phone number property
+     *
+     * @param phone - String of phone number to be validated
+     * @return formatted and validated phone number or null if phone number is invalid
+     */
+    public String validatePhone(String phone) {
+        String formattedPhone = cleanNumber(phone);
+        if (isNumbersOnly(formattedPhone)) {
+            if (phoneNumType(formattedPhone) == null) {
+                return null;
+            } else if (phoneNumType(formattedPhone).equals("cellphone") || phoneNumType(formattedPhone).equals("long_landline")) {
+                if (formattedPhone.length() == 10) {
+                    return formattedPhone;
+                }
+            } else if (phoneNumType(formattedPhone).equals("short_landline")) {
+                if (formattedPhone.length() == 9) {
+                    return formattedPhone;
+                }
+            }
+        }
+        return "length invalid";
+    }
+
+    /**
+     * Determines phone number type
+     *
+     * @param phone - Phone number
+     * @return cellphone, landline or null
+     */
+    public String phoneNumType(String phone) {
+        // ASCII for 0 = 48, 5 = 53, 7 = 55
+        if (phone.charAt(0) == 48) {
+            if (phone.charAt(1) == 53) {
+                return "cellphone";
+            } else if (phone.charAt(1) == 55){
+                return "long_landline";
+            } else {
+                return "short_landline";
+            }
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Removing hyphens from string
+     *
+     * @param hyphenedStr String with hyphen
+     * @return String without hyphen
+     */
+    public String removeHyphen(String hyphenedStr) {
+        String[] splittedStr = hyphenedStr.split("[- +]");
+        String result = "";
+        for (String s : splittedStr) {
+            result = result.concat(s);
+        }
+        return result;
+    }
+
+    /**
+     * Cleaning string from white spaces and hyphens
+     *
+     * @param num - String numbers to be cleaned
+     * @return Cleaned number string
+     */
+    public String cleanNumber(String num) {
+  /*      String validNum;
+        try {
+            validNum = cleanStringInput(num);
+            for (int i = 0; i < validNum.length(); i++) {
+                int charValue = validNum.charAt(i);
+                if (charValue == 45 || charValue == 32) {
+                    validNum = removeHyphen(validNum);
+                }
+            }
+        } catch (NullPointerException npe) { */
+        return null;
+        //       }
+        //       return validNum;
+    }
+
+    /**
+     * Cleaning and validating phone number chars
+     *
+     * @param num - Number to be validated
+     * @return true if string contains only numbers
+     */
+    public boolean isNumbersOnly(String num) {
+        String cleanNum = cleanNumber(num);
+        try {
+            for (int i = 0; i < cleanNum.length(); i++) {
+                int charValue = cleanNum.charAt(i);
+                if (!(charValue >= 48 && charValue <= 57)) {
+                    return false;
+                }
+            }
+        } catch (NullPointerException npe) {
+            return false;
+        }
+        return true;
+    }
 
 }

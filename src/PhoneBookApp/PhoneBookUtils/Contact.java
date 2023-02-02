@@ -33,7 +33,6 @@ public class Contact {
     /**
      * Setting contact last name
      * @param lastName - set contact last name
-
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
@@ -44,12 +43,7 @@ public class Contact {
      * @param companyName - set contact company name
      */
     public void setCompanyName(String companyName) {
-        int charLimit = 20;
-        if (companyName.length() <= charLimit) {
             this.companyName = companyName;
-        } else {
-            throw new ArithmeticException("Company name length invalid");
-        }
     }
 
     public String getFirstName() {
@@ -98,10 +92,6 @@ public class Contact {
         return this.phoneNumber;
     }
 
-
-    private boolean numOfCharsRestriction(String str, int limit) {
-        return str.length() <= limit;
-    }
 
     /**
      * Clean, validate and parse phone number property
