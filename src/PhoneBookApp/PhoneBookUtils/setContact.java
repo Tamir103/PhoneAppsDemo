@@ -11,8 +11,9 @@ public class setContact {
 
     /**
      * Setting Contact full name
-     * @throws NullPointerException if first name is invalid
+     *
      * @return contact object with full name set
+     * @throws NullPointerException if first name is invalid
      */
     public Contact setContactFullInfo() {
         String firstName, middleName, lastName, phoneNumber, companyName, result = FAIL;
@@ -39,6 +40,10 @@ public class setContact {
         if (isNamePerTypeValid("Company Name", companyName)) {
             contact.setCompanyName(companyName);
         }
+        phoneNumber = infoPerTypeInput("Phone Number");
+        if (isNamePerTypeValid("Phone Number", phoneNumber)) {
+            contact.setPhoneNumber(phoneNumber);
+        }
 
         return contact;
     }
@@ -54,7 +59,8 @@ public class setContact {
 
     /**
      * Prompting the user and receiving input from scanner
-     * @param inputType First Name, Middle Name, Last Name, Company Name, Phone Number
+     *
+     * @param inputType First Name, Middle Name, Last Name, Company Name (only limits number of characters), Phone Number
      * @return User input if valid, "middle" if middle name invalid, FAIL if input invalid
      */
     private String infoPerTypeInput(String inputType) {
@@ -62,14 +68,16 @@ public class setContact {
         for (int i = 0; i < 3; i++) {
             input = userInputString("Enter contact " + inputType);
             if (!inputType.equals("Middle Name")) {
-                if(inputType.equals("Company Name")) {
+                if (inputType.equals("Company Name")) {
                     if (numOfCharsRestriction(input, limitNumOfChars)) {
                         return input;
                     }
                 } else if (inputType.equals("Phone Number")) {
-                    //TODO copy phone number validation methods, and use them here, use setPhoneNumber as example
+                    if (isPhoneNumberValid(input)) {
+                        return input;
+                    }
 
-                } else if(isNameValid(input)) {
+                } else if (isNameValid(input)) {
                     return input;
                 }
             } else {
@@ -93,6 +101,7 @@ public class setContact {
     /**
      * Validate name using the validateName method
      * Prints Name too long and english letters restriction errors
+     *
      * @param name - Name to be validated
      * @return true if name is valid, false if not
      */
@@ -109,7 +118,6 @@ public class setContact {
         }
         return false;
     }
-
 
 
     /**
@@ -172,7 +180,22 @@ public class setContact {
         }
     }
 
+    private boolean isPhoneNumberValid(String phoneNumber) {
+        switch (validatePhone(phoneNumber)) {
+            case FAIL -> {
+                System.err.println("ERROR - Phone number format invalid, or some characters are not numbers");
+                return false;
+            }
+            case null -> {
+                System.err.println("Phone number length is invalid");
+                return false;
+            }
+            default -> {
+                return true;
+            }
+        }
 
+    }
 
     /**
      * Clean, validate and parse phone number property
@@ -180,7 +203,7 @@ public class setContact {
      * @param phone - String of phone number to be validated
      * @return formatted and validated phone number or null if phone number is invalid
      */
-    public String validatePhone(String phone) {
+    public String validatePhone(String phone) { // TODO change method to support invalid phone number format
         String formattedPhone = cleanNumber(phone);
         if (isNumbersOnly(formattedPhone)) {
             if (phoneNumType(formattedPhone) == null) {
@@ -195,21 +218,21 @@ public class setContact {
                 }
             }
         }
-        return "length invalid";
+        return FAIL;
     }
 
     /**
      * Determines phone number type
      *
      * @param phone - Phone number
-     * @return cellphone, landline or null
+     * @return cellphone, long_landline, short_landline or null
      */
     public String phoneNumType(String phone) {
         // ASCII for 0 = 48, 5 = 53, 7 = 55
         if (phone.charAt(0) == 48) {
             if (phone.charAt(1) == 53) {
                 return "cellphone";
-            } else if (phone.charAt(1) == 55){
+            } else if (phone.charAt(1) == 55) {
                 return "long_landline";
             } else {
                 return "short_landline";
@@ -217,6 +240,7 @@ public class setContact {
         } else {
             return null;
         }
+
     }
 
 
@@ -242,7 +266,7 @@ public class setContact {
      * @return Cleaned number string
      */
     public String cleanNumber(String num) {
-  /*      String validNum;
+        String validNum;
         try {
             validNum = cleanStringInput(num);
             for (int i = 0; i < validNum.length(); i++) {
@@ -251,10 +275,10 @@ public class setContact {
                     validNum = removeHyphen(validNum);
                 }
             }
-        } catch (NullPointerException npe) { */
-        return null;
-        //       }
-        //       return validNum;
+        } catch (NullPointerException npe) {
+            return null;
+        }
+        return validNum;
     }
 
     /**
