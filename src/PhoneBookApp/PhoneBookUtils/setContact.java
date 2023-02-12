@@ -67,8 +67,9 @@ public class setContact {
         for (int i = 0; i < 3; i++) {
             input = userInputString("Enter contact " + inputType);
             if (inputType.equals("Phone Number")) {
-                if (isPhoneNumberValid(input)) {
-                    return input;
+                String validatedPhone = isPhoneNumberValid(input);
+                if (!(validatedPhone.equals(FAIL))) {
+                    return validatedPhone;
                 }
             } else if (inputType.equals("Company Name")) {
                 String cleanInput = cleanStringInput(input);
@@ -185,18 +186,19 @@ public class setContact {
         }
     }
 
-    private boolean isPhoneNumberValid(String phoneNumber) {
-        switch (validatePhone(phoneNumber)) {
+    private String isPhoneNumberValid(String phoneNumber) {
+        String postValidation = validatePhone(phoneNumber);
+        switch (postValidation) {
             case FAIL -> {
-                System.err.println("ERROR - Phone number format invalid, or some characters are not numbers");
-                return false;
+                System.err.println("ERROR - Phone number format invalid (should start with 0, and have 9-10 numbers), or some characters are not numbers");
+                return FAIL;
             }
             case null -> {
-                System.err.println("Phone number length is invalid");
-                return false;
+                System.err.println("ERROR - Phone number format invalid (should start with 0, and have 9-10 numbers), or numbers length is invalid");
+                return FAIL;
             }
             default -> {
-                return true;
+                return postValidation;
             }
         }
 
