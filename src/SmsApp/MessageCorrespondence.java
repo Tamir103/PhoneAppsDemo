@@ -16,15 +16,15 @@ public class MessageCorrespondence extends Message {
 //    HashMap<String, ArrayList<Message>> CorrespondenceMap;
 
     //TODO find contact in phone book
-    public MessageCorrespondence(String contactName, String messageContent/*, boolean isOutGoingMessage*/) {
+/*    public MessageCorrespondence(String contactName, String messageContent, boolean isOutGoingMessage) {
         super(messageContent);
         this.contact = new Contact();
         this.Correspondence = new ArrayList<>();
 //        this.CorrespondenceMap = new HashMap<>();
-    }
-    public MessageCorrespondence(String contactName) {
+    }*/
+    public MessageCorrespondence(/*String contactName*/) {
         super();
-        this.contact = new Contact();
+//        this.contact = new Contact();
         this.Correspondence = new ArrayList<>();
     }
 

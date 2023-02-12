@@ -1,10 +1,10 @@
 package PhoneBookApp.PhoneBookUtils;
 
-import java.util.HashMap;
+import SmsApp.MessageCorrespondence;
 
 /**
  * Phone book contact object.
- * Contains first, middle, and last name, phone number, and company name for each contact object
+ * Contains first, middle, and last name, phone number, company name and a default message correspondence for each contact object
  */
 public class Contact {
     private String firstName;
@@ -12,6 +12,8 @@ public class Contact {
     private String lastName;
     private String phoneNumber;
     private String companyName;
+
+    private MessageCorrespondence correspondence = new MessageCorrespondence();
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -41,16 +43,6 @@ public class Contact {
         } else {
             return getFirstName() + " " + getLastName();
         }
-    }
-    public HashMap<String,String> getFullContactInfo() {
-        HashMap<String,String> contatcInfo = new HashMap<>();
-        contatcInfo.put("firstName", this.firstName);
-        if(this.middleName != null) { contatcInfo.put("middleName", this.middleName); }
-        contatcInfo.put("lastName", this.lastName);
-        contatcInfo.put("companyName", this.companyName);
-        contatcInfo.put("phoneNumber", this.phoneNumber);
-
-        return contatcInfo;
     }
 
     public void setPhoneNumber(String phoneNumber) {

@@ -31,8 +31,7 @@ public class setContact {
         if (isNamePerTypeValid("Middle Name", middleName) && !middleName.equals("middle")) {
             contact.setMiddleName(middleName);
         }
-
-        lastName = infoPerTypeInput("Last Name");
+        lastName = infoPerTypeInput("Last Name");  // TODO handle NullPointerException when lastName is empty   sad
         if (isNamePerTypeValid("Last Name", lastName)) {
             contact.setLastName(lastName);
         }
@@ -40,7 +39,7 @@ public class setContact {
         if (isNamePerTypeValid("Company Name", companyName)) {
             contact.setCompanyName(companyName);
         }
-        phoneNumber = infoPerTypeInput("Phone Number");
+        phoneNumber = infoPerTypeInput("Phone Number"); // TODO keep debugging, bugs
         if (isNamePerTypeValid("Phone Number", phoneNumber)) {
             contact.setPhoneNumber(phoneNumber);
         }
@@ -67,25 +66,27 @@ public class setContact {
         String input;
         for (int i = 0; i < 3; i++) {
             input = userInputString("Enter contact " + inputType);
-            if (!inputType.equals("Middle Name")) {
-                if (inputType.equals("Company Name")) {
-                    if (numOfCharsRestriction(input, limitNumOfChars)) {
-                        return input;
-                    }
-                } else if (inputType.equals("Phone Number")) {
-                    if (isPhoneNumberValid(input)) {
-                        return input;
-                    }
-
-                } else if (isNameValid(input)) {
+            if (inputType.equals("Phone Number")) {
+                if (isPhoneNumberValid(input)) {
                     return input;
                 }
+            } else if (inputType.equals("Company Name")) {
+                String cleanInput = cleanStringInput(input);
+                if (numOfCharsRestriction(cleanInput, limitNumOfChars)) {
+                    return cleanInput;
+                }
+            } else if (!inputType.equals("Middle Name")) {
+                String nameValidation = isNameValid(input);
+                if (!nameValidation.equals(FAIL)) {
+                    return nameValidation;
+                }
             } else {
+                String nameValidation = isNameValid(input);
                 if (!input.equals("") && !(input == null)) {
-                    if (isNameValid(input)) {
-                        return input;
+                    if (!nameValidation.equals(FAIL)) {
+                        return nameValidation;
                     }
-                } else {
+                } else if (i == 2) {
                     return "middle";
                 }
             }
@@ -105,18 +106,18 @@ public class setContact {
      * @param name - Name to be validated
      * @return true if name is valid, false if not
      */
-    private boolean isNameValid(String name) {
+    private String isNameValid(String name) {
         String validatedName = validateName(name);
-        if (name.equals(validatedName)) {
-            return true;
+        if (!(validatedName.equals("1") || validatedName.equals("2"))) {
+            return validatedName;
         } else if (validatedName.equals("1")) {
             System.err.println("Name too long, restricted to " + limitNumOfChars + " characters");
-            return false;
+            return FAIL;
         } else if (validatedName.equals("2")) {
             System.err.println("Name can contain english letters only");
-            return false;
+            return FAIL;
         }
-        return false;
+        return FAIL;
     }
 
 
@@ -128,8 +129,8 @@ public class setContact {
      */
     private String validateName(String name) {
         String cleanName = cleanStringInput(name);
-        if (isOnlyEnglishLetters(name)) {
-            if (numOfCharsRestriction(name, limitNumOfChars)) {
+        if (isOnlyEnglishLetters(cleanName)) {
+            if (numOfCharsRestriction(cleanName, limitNumOfChars)) {
                 return cleanName;
             } else {
                 return "1";
@@ -172,10 +173,14 @@ public class setContact {
      * @return String without consecutive spaces or null
      */
     private String cleanStringInput(String str) {
-        String nameNoUselessSpaces = str.replaceAll("\\s+", " ").trim();
-        if (nameNoUselessSpaces.length() > 0) {
-            return nameNoUselessSpaces;
-        } else {
+        try {
+            String nameNoUselessSpaces = str.replaceAll("\\s+", " ").trim();
+            if (nameNoUselessSpaces.length() > 0) {
+                return nameNoUselessSpaces;
+            } else {
+                return null;
+            }
+        } catch (NullPointerException npe) {
             return null;
         }
     }
@@ -203,7 +208,7 @@ public class setContact {
      * @param phone - String of phone number to be validated
      * @return formatted and validated phone number or null if phone number is invalid
      */
-    public String validatePhone(String phone) { // TODO change method to support invalid phone number format
+    public String validatePhone(String phone) {
         String formattedPhone = cleanNumber(phone);
         if (isNumbersOnly(formattedPhone)) {
             if (phoneNumType(formattedPhone) == null) {

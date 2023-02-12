@@ -73,60 +73,20 @@ public class myPhoneBook extends PhoneBookBlueprint {
     }
 
     /**
-     * Create contacts object with name and phone number
+     * Create contacts object using setContact object
      * In this phone book number of name characters is limited to 20
      *
-     * @return Contact object with valid fields filled
+     * @return Contact object with valid fields filled, or null if contact already exist in contactList (phone book)
      */
     @Override
     public Contact createContact() {
-    /*TODO turn into crating all contact details: first, middle and last name, company name and phone number. AND VALIDATE THERE IS ONLY ONE.*/
-        boolean success = false;
-        String firstNameInput;
-        String middleNameInput;
-        String lastNameInput;
-        String fullNameInput;
-        Contact contact = new Contact();
-        System.out.println("Enter contact first name");
-   //     printTextsFromMap("enterContactName");
-        for (int i = 0; i < 3; i++) {
-            firstNameInput = scan.nextLine();
-            System.out.println("Enter contact middle name, if there is none, leave empty and press Enter");
-            middleNameInput = scan.nextLine();
-            System.out.println("Enter contact last name, if there is none, leave empty and press Enter");
-            lastNameInput = scan.nextLine();
-
-            fullNameInput = firstNameInput.trim() + " " + middleNameInput.trim() + " " + lastNameInput.trim();
-            if (contactsList.contains(fullNameInput)) {
-                try {
-                    contact.setFirstName(firstNameInput);
-                    contact.setMiddleName(middleNameInput);
-                    contact.setLastName(lastNameInput);
-                    success = true;
-                    break;
-                } catch (IllegalArgumentException iae) {
-//                    PhoneBookAppMethods.printErrorMessages(PhoneBookAppMethods.calculateMessageIndex(i, false, true, true));
-                } catch (ArithmeticException ae) {
-//                    PhoneBookAppMethods.printErrorMessages(PhoneBookAppMethods.calculateMessageIndex(i, false, false, true));
-                }
-            }
+        setContact setContact = new setContact();
+        Contact contact = setContact.setContactFullInfo();
+        if (contactsList.contains(contact.getFullName()) || contactsList.contains(contact.getPhoneNumber())) {
+            System.out.println("CONTACT ALREADY EXIST IN PHONE BOOK");
+            return null;
         }
-
- /*       if (success) {
-            printTextsFromMap("enterPhone");
-            for (int i = 0; i < 3; i++) {
-                String phone = scan.nextLine();
-                try {
-                    contact.setPhoneNumber(phone);
-                    return contact;
-                } catch (NumberFormatException nfe) {
-                    PhoneBookAppMethods.printErrorMessages(PhoneBookAppMethods.calculateMessageIndex(i, false, false, false));
-                } catch (IllegalArgumentException iae) {
-                    PhoneBookAppMethods.printErrorMessages(PhoneBookAppMethods.calculateMessageIndex(i, false, true, false));
-                }
-            }
-        }*/
-        return null;
+        return contact;
 
     }
 
@@ -218,14 +178,15 @@ public class myPhoneBook extends PhoneBookBlueprint {
         }
     }
 
-    public void printContact(Contact c) {/* //TODO update to fit new contact info
-        String name = c.getName();
-        String phone = c.getPhoneNumber();
-        int dotAmount = 25 - name.length();
-        System.out.print(Objects.requireNonNullElse(name, "Null"));
-        PhoneBookAppMethods.printMenuDots(dotAmount);
-        System.out.print(phone);
-*/
+    public void printContact(Contact c) {
+        int dotAmount = (c.getFullName().length() + 8) / 2;
+        System.out.println("Name: " + c.getFullName());
+        System.out.println("Phone Number: " + c.getPhoneNumber());
+        if(c.getCompanyName() != null) System.out.println("Company: " + c.getCompanyName());
+        for(int i = 0; i < dotAmount; i++) {
+            System.out.print("-*");
+        }
+        System.out.println();
     }
 
     /**
@@ -233,27 +194,10 @@ public class myPhoneBook extends PhoneBookBlueprint {
      * @param listOfContacts - List of contacts to be printed
      */
     @Override
-    public void printPhoneBook(ArrayList<Contact> listOfContacts) { /*//TODO consider importing relevant methods from PhoneBookAppMethods
-        PhoneBookAppMethods.printFrame(37);
-        System.out.println("CONTACTS: ");
-        for (Contact contact : listOfContacts) {
-            System.out.print("| ");
-            printContact(contact);
-            int totalLineLength;
-            try {
-                totalLineLength = 25 + contact.getPhoneNumber().length();
-            } catch (NullPointerException npe) {
-                totalLineLength = 35;
-                System.out.print("      ");
-            }
-            if (totalLineLength == 35) {
-                System.out.print("|");
-            } else {
-                System.out.print(" |");
-            }
-            System.out.println();
+    public void printPhoneBook(ArrayList<Contact> listOfContacts) { //TODO consider importing relevant methods from PhoneBookAppMethods
+        for (Contact c: listOfContacts) {
+            printContact(c);
         }
-        PhoneBookAppMethods.printFrame(37); */
     }
 
     /**
