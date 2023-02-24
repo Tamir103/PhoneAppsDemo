@@ -1,0 +1,22 @@
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+Name: Tuvia : the cat
+Phone Number: 0544444444
+Company: Cats
+-*-*-*-*-*-*-*-*-*-*
+Name: Zen : doggi : dog
+Phone Number: 089999999
+Company: Dogs
+-*-*-*-*-*-*-*-*-*
+Name: Osho : is also : dog
+Phone Number: 0522222222
+Company:
+-*-*-*-*-*-*-*-*-*-*-*-*-*
+Name: tuvia : the cat
+Phone Number: 0544444444
+Company:
+-*-*-*-*-*-*-*-*-*-*
+Name: Tuvia the cat
+Phone Number: 098765432
+Company: Cats
+-*-*-*-*-*-*-*-*-*-*
+

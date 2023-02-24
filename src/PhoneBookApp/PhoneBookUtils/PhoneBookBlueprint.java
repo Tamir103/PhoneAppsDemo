@@ -1,13 +1,10 @@
 package PhoneBookApp.PhoneBookUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 
 public abstract class PhoneBookBlueprint extends Contact implements Comparable {
 
-    public abstract Map<Integer, String> generatePhoneBookMenu();
+    public abstract HashMap<Integer, String> generatePhoneBookMenu();
 
     public abstract ArrayList<Contact> generateContactsList();
 

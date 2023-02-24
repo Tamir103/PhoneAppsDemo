@@ -6,7 +6,7 @@ import SmsApp.MessageCorrespondence;
  * Phone book contact object.
  * Contains first, middle, and last name, phone number, company name and a default message correspondence for each contact object
  */
-public class Contact {
+public class Contact extends setContact {
     private String firstName;
     private String middleName;
     private String lastName;

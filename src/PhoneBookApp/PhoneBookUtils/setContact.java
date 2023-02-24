@@ -1,5 +1,6 @@
 package PhoneBookApp.PhoneBookUtils;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class setContact {
@@ -17,34 +18,60 @@ public class setContact {
      */
     public Contact setContactFullInfo() {
         String firstName, middleName, lastName, phoneNumber, companyName, result = FAIL;
+        String first = "First Name", middle = "Middle Name" , last = "Last Name", company = "Company Name", phone = "Phone Number";
         Contact contact = new Contact();
-        firstName = infoPerTypeInput("First Name");
-        if (isNamePerTypeValid("First Name", firstName)) {
+        firstName = infoPerTypeInput(first);
+        if (isNamePerTypeValid(first, firstName)) {
             contact.setFirstName(firstName);
             result = OK;
         }
-        if (result.equals(FAIL)) {
-            System.err.println("UNABLE TO SET CONTACT DETAILS, FIRST NAME IS MANDATORY");
+        if (!setContactMessages(first.toUpperCase(), result).equals(OK)) {
             return null;
         }
-        middleName = infoPerTypeInput("Middle Name");
-        if (isNamePerTypeValid("Middle Name", middleName) && !middleName.equals("middle")) {
+        middleName = infoPerTypeInput(middle);
+        if (isNamePerTypeValid(middle, middleName) && !middleName.equals("middle")) {
             contact.setMiddleName(middleName);
         }
-        lastName = infoPerTypeInput("Last Name");  // TODO handle NullPointerException when lastName is empty   sad
-        if (isNamePerTypeValid("Last Name", lastName)) {
+        if (!setContactMessages(middle.toUpperCase(), result).equals(OK)) {
+            return null;
+        }
+        lastName = infoPerTypeInput(last);
+        if (isNamePerTypeValid(last, lastName)) {
             contact.setLastName(lastName);
         }
-        companyName = infoPerTypeInput("Company Name");
-        if (isNamePerTypeValid("Company Name", companyName)) {
+        if (!setContactMessages(last.toUpperCase(), result).equals(OK)) {
+            return null;
+        }
+        companyName = infoPerTypeInput(company);
+        if (isNamePerTypeValid(company, companyName)) {
             contact.setCompanyName(companyName);
         }
-        phoneNumber = infoPerTypeInput("Phone Number"); // TODO keep debugging, bugs
-        if (isNamePerTypeValid("Phone Number", phoneNumber)) {
+        if (!setContactMessages(company.toUpperCase(), result).equals(OK)) {
+            return null;
+        }
+        phoneNumber = infoPerTypeInput(phone);
+        if (isNamePerTypeValid(phone, phoneNumber)) {
             contact.setPhoneNumber(phoneNumber);
+            result = OK;
+        }
+        if (!setContactMessages(phone.toUpperCase(), result).equals(OK)) {
+            return null;
+        }
+        return contact;
+    }
+
+     private String setContactMessages(String stage, String result) {
+        if (stage.equals("FIRST NAME") && result.equals(FAIL)) {
+            System.err.println("UNABLE TO SET CONTACT DETAILS, FIRST NAME IS MANDATORY");
+            return FAIL;
+        } else if (stage.equals("PHONE NUMBER") && result.equals(FAIL)) {
+            System.err.println("UNABLE TO SET CONTACT DETAILS, PHONE NUMBER IS MANDATORY");
+            return FAIL;
+        } else {
+            System.out.println(stage + " SET SUCCESSFUL");
+            return OK;
         }
 
-        return contact;
     }
 
     private boolean isNamePerTypeValid(String nameType, String name) {
@@ -151,7 +178,7 @@ public class setContact {
      * @param str to validate
      * @return true if only english letters
      */
-    private boolean isOnlyEnglishLetters(String str) {
+    public boolean isOnlyEnglishLetters(String str) {
         // ASCII letters "a" = 97, "z" = 122, "A" = 65, "Z" = 90, " " = 32
         String validStr = cleanStringInput(str);
         if (validStr != null) {
@@ -173,7 +200,7 @@ public class setContact {
      * @param str - String input to format
      * @return String without consecutive spaces or null
      */
-    private String cleanStringInput(String str) {
+    private static String cleanStringInput(String str) {
         try {
             String nameNoUselessSpaces = str.replaceAll("\\s+", " ").trim();
             if (nameNoUselessSpaces.length() > 0) {
@@ -257,7 +284,7 @@ public class setContact {
      * @param hyphenedStr String with hyphen
      * @return String without hyphen
      */
-    public String removeHyphen(String hyphenedStr) {
+    public static String removeHyphen(String hyphenedStr) {
         String[] splittedStr = hyphenedStr.split("[- +]");
         String result = "";
         for (String s : splittedStr) {
@@ -272,7 +299,7 @@ public class setContact {
      * @param num - String numbers to be cleaned
      * @return Cleaned number string
      */
-    public String cleanNumber(String num) {
+    public static String cleanNumber(String num) {
         String validNum;
         try {
             validNum = cleanStringInput(num);
@@ -294,7 +321,7 @@ public class setContact {
      * @param num - Number to be validated
      * @return true if string contains only numbers
      */
-    public boolean isNumbersOnly(String num) {
+    public static boolean isNumbersOnly(String num) {
         String cleanNum = cleanNumber(num);
         try {
             for (int i = 0; i < cleanNum.length(); i++) {
