@@ -1,19 +1,17 @@
-package PhoneBookApp.PhoneBookUtils;
+package PhoneBookApp;
 
-import SmsApp.MessageCorrespondence;
+import java.io.Serializable;
 
 /**
  * Phone book contact object.
  * Contains first, middle, and last name, phone number, company name and a default message correspondence for each contact object
  */
-public class Contact extends setContact {
+public class Contact extends setContact implements Serializable {
     private String firstName;
     private String middleName;
     private String lastName;
     private String phoneNumber;
     private String companyName;
-
-    private MessageCorrespondence correspondence = new MessageCorrespondence();
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -52,4 +50,5 @@ public class Contact extends setContact {
     public String getPhoneNumber() {
         return this.phoneNumber;
     }
+
 }

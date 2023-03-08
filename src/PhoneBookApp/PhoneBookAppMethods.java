@@ -1,10 +1,11 @@
-package PhoneBookApp.PhoneBookUtils;
+package PhoneBookApp;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class PhoneBookAppMethods extends myPhoneBook {
 
-    public void printMenu() {
+    public void printMenu(HashMap<Integer, String> menu) {
         for (Map.Entry<Integer, String> entry : menu.entrySet()) {
             if (entry.getKey() < 10) {
                 System.out.print(entry.getKey());
@@ -16,7 +17,7 @@ public class PhoneBookAppMethods extends myPhoneBook {
                 System.out.println(entry.getValue());
             }
         }
-        myPhoneBook.printTextsFromMap("menuInstructions");
+        printTextsFromMap("menuInstructions");
     }
 
     public static void printMenuDots(int amount) {
@@ -38,8 +39,8 @@ public class PhoneBookAppMethods extends myPhoneBook {
      */
     public int menuChoice() {
         for (int i = 0; i < 3; i++) {
-            String input = scan.nextLine();
-            if (setContact.isNumbersOnly(input)) {
+            String input = mPhoneData.scan.nextLine();
+            if (isNumbersOnly(input)) {
                 int inputInt = Integer.parseInt(input);
                 if (isItemNumValid(inputInt, menu)) {
                     return inputInt;
@@ -75,17 +76,17 @@ public class PhoneBookAppMethods extends myPhoneBook {
      */
     public static void printErrorMessages(int messageIndex) {
         switch (messageIndex) {
-            case 1 -> System.err.println(myPhoneBook.textsMap.get("invalidInputWarn"));
-            case 2 -> System.err.println(myPhoneBook.textsMap.get("nameLengthWarn"));
-            case 3 -> System.err.println(myPhoneBook.textsMap.get("phoneFormat"));
-            case 4 -> System.err.println(myPhoneBook.textsMap.get("lastInvalidInputWarn") + " - " + myPhoneBook.textsMap.get("invalidInputWarn"));
-            case 5 -> System.err.println(myPhoneBook.textsMap.get("lastInvalidInputWarn") + " - " + myPhoneBook.textsMap.get("nameLengthWarn"));
-            case 6 -> System.err.println(myPhoneBook.textsMap.get("lastInvalidInputWarn") + " - " + myPhoneBook.textsMap.get("phoneFormat"));
-            case 7 -> System.err.println(myPhoneBook.textsMap.get("inputErrMsg"));
-            case 8 -> System.err.println(myPhoneBook.textsMap.get("contactNotExist"));
-            case 9 -> System.err.println(myPhoneBook.textsMap.get("writeToFileErr"));
-            case 10 -> System.err.println(myPhoneBook.textsMap.get("emptyList"));
-            case 11 -> System.err.println(myPhoneBook.textsMap.get("unsupportedFile"));
+            case 1 -> System.err.println(textsMap.get("invalidInputWarn"));
+            case 2 -> System.err.println(textsMap.get("nameLengthWarn"));
+            case 3 -> System.err.println(textsMap.get("phoneFormat"));
+            case 4 -> System.err.println(textsMap.get("lastInvalidInputWarn") + " - " + textsMap.get("invalidInputWarn"));
+            case 5 -> System.err.println(textsMap.get("lastInvalidInputWarn") + " - " + textsMap.get("nameLengthWarn"));
+            case 6 -> System.err.println(textsMap.get("lastInvalidInputWarn") + " - " + textsMap.get("phoneFormat"));
+            case 7 -> System.err.println(textsMap.get("inputErrMsg"));
+            case 8 -> System.err.println(textsMap.get("contactNotExist"));
+            case 9 -> System.err.println(textsMap.get("writeToFileErr"));
+            case 10 -> System.err.println(textsMap.get("emptyList"));
+            case 11 -> System.err.println(textsMap.get("unsupportedFile"));
         }
     }
 
@@ -141,11 +142,11 @@ public class PhoneBookAppMethods extends myPhoneBook {
      * @return - 1 for Y, 0 for N, 2 for invalid input
      */
     public static int enterAndValidateYorN(String startMessage) {
-        myPhoneBook.printTextsFromMap(startMessage);
+        printTextsFromMap(startMessage);
         for (int i = 0; i < 3; i++) {
             int errorMessage = PhoneBookAppMethods.calculateMessageIndex(i, true, true, true);
             try {
-                String input = myPhoneBook.scan.nextLine();
+                String input = mPhoneData.scan.nextLine();
                 if (isYorN(input).equalsIgnoreCase("Y")) {
                     return 1;
                 } else if (isYorN(input).equalsIgnoreCase("N")) {

@@ -1,14 +1,17 @@
-package PhoneBookApp.PhoneBookUtils;
+package PhoneBookApp;
 
-import java.util.HashMap;
-import java.util.Scanner;
+import Main.PhoneData;
 
 public class setContact {
 
+    static PhoneData mPhoneData = PhoneData.getInstance();;
     static int limitNumOfChars = 20;
     static final String OK = "OK";
     static final String FAIL = "FAIL";
-    static Scanner scan = new Scanner(System.in);
+
+//    public setContact() {
+//        mPhoneData = PhoneData.getInstance();
+//    }
 
     /**
      * Setting Contact full name
@@ -124,7 +127,7 @@ public class setContact {
 
     private String userInputString(String promptMessage) {
         System.out.println(promptMessage);
-        return scan.nextLine();
+        return mPhoneData.scan.nextLine();
     }
 
     /**

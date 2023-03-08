@@ -5,7 +5,7 @@
     "invalidInputWarn": "Input is invalid, try again: ",
     "lastInvalidInputWarn": "Last chance",
     "inputErrMsg": "Due to invalid inputs the app is unable to perform its designated actions.",
-    "enterContactName": "Enter contact name: ",
+    "enterContactName": "Enter contact full name: ",
     "nameLengthWarn": "Name is limited to 20 characters",
     "enterPhone": "Enter contact phone number: ",
     "phoneFormat": "Phone number should have 9 numbers and begin with 0 for landline or 05 for cellphone",
@@ -22,5 +22,5 @@
     "fileExist": "File already exist, would you like to write in it? \nEnter Y or N",
     "createRandomFileName": "We assigned a random file name for you, with action date and time",
     "unsupportedFile": "Phone book file is not in supported format",
-    "exit": "Thank you for using the PhoneBook Application - GOODBYE"
+    "exit": "Thank you for using this Application - GOODBYE"
 }

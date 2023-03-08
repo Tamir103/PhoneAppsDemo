@@ -6,9 +6,10 @@
  */
 package SmsApp;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Message {
+public class Message implements Serializable {
     private String messageContent;
     private boolean isOutGoingMessage;
     private final LocalDateTime messageTime;
@@ -40,5 +41,9 @@ public class Message {
     }
     boolean isOutGoingMessage() {
         return isOutGoingMessage;
+    }
+
+    public String toString() {
+        return getMessageContent() + ", " + getMessageTime();
     }
 }
