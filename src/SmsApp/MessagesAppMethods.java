@@ -80,4 +80,24 @@ public class MessagesAppMethods {
             System.out.println("-------------------------------");
         }
     }
+
+    public ArrayList<Contact> getAllContactsFromCorrespondenceList(ArrayList<MessageCorrespondence> listOfCorrespondence) {
+        ArrayList<Contact> list = new ArrayList<>();
+        for (MessageCorrespondence mc : listOfCorrespondence) {
+            list.add(mc.getContact());
+        }
+        return list;
+    }
+
+    public ArrayList<MessageCorrespondence> removeCorrespondenceDuplicatesByContacts(ArrayList<MessageCorrespondence> listOfCorrespondence) {
+        ArrayList<Contact> listOfContacts = getAllContactsFromCorrespondenceList(listOfCorrespondence);
+        for (Contact c : listOfContacts) {
+            for (MessageCorrespondence mc : listOfCorrespondence) {
+                if (c.equals(mc.getContact())) {
+                    listOfCorrespondence.remove(mc);
+                }
+            }
+        }
+        return listOfCorrespondence;
+    }
 }

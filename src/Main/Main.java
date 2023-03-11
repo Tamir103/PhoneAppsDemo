@@ -134,8 +134,6 @@ public class Main {
                         SMS.sendMessage(messageInput);  // Using the constructor in which no I/O message flag
                         mPhoneData.allSMS.set(indexInAllSMS, SMS);
                     }
-
-
                 }
                 case 2 -> {
                     messagesExit = findContactManager();
@@ -277,13 +275,18 @@ public class Main {
 
     // 8
     static void removeDuplicatesManager() {
-        ArrayList<Contact> duplicatesList = phoneBook.findDuplicates(mPhoneData.contactsList);
-        mPhoneData.contactsList = phoneBook.removeDuplicates(mPhoneData.contactsList);
-        if (!duplicatesList.isEmpty() && runningApp.equals((String.valueOf(PhoneApps.PHONEBOOK)))) {
-            System.out.println("DUPLICATES REMOVED: ");
-            phoneBook.printPhoneBook(duplicatesList);
-        } else if (runningApp.equals((String.valueOf(PhoneApps.PHONEBOOK)))) {
-            System.out.println("No Duplicates Found");
+        ArrayList<Contact> duplicatesList;
+        if (runningApp.equals((String.valueOf(PhoneApps.PHONEBOOK)))) {
+            duplicatesList = phoneBook.findDuplicates(mPhoneData.contactsList);
+            mPhoneData.contactsList = phoneBook.removeContactDuplicates(mPhoneData.contactsList);
+            if (!duplicatesList.isEmpty()) {
+                System.out.println("DUPLICATES REMOVED: ");
+                phoneBook.printPhoneBook(duplicatesList);
+            } else {
+                System.out.println("No Duplicates Found");
+            }
+        } else if (runningApp.equals((String.valueOf(PhoneApps.MESSAGES)))) {
+            messagesApp.removeCorrespondenceDuplicatesByContacts(mPhoneData.allSMS);
         }
     }
 

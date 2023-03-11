@@ -127,7 +127,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
      * @param listOfContacts List for duplicates removal
      * @return List with duplicates removed
      */
-    public ArrayList<Contact> removeDuplicates(ArrayList<Contact> listOfContacts) {
+    public ArrayList<Contact> removeContactDuplicates(ArrayList<Contact> listOfContacts) {
         ArrayList<Contact> duplicatesList = findDuplicates(listOfContacts);
         if (!duplicatesList.isEmpty()) {
             for (Contact contact : duplicatesList) {
@@ -365,7 +365,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
                         name = "";
                         phone = "";
                         importedContactsList = addContact(contact, importedContactsList);
-                        importedContactsList = removeDuplicates(importedContactsList); //TODO debug bug
+                        importedContactsList = removeContactDuplicates(importedContactsList); //TODO debug bug
                     }
                 } catch (FileNotFoundException fnfe) {
                     System.err.println("File Not Found"); //TODO maybe put text in errors map
