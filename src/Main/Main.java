@@ -30,13 +30,14 @@ public class Main {
     }
 
     public static void mainPhoneMethod() {
+        String mainMenu =  PhoneApps.EXIT.serialNumber + " - " + PhoneApps.EXIT +
+                "\n" + PhoneApps.PHONEBOOK.serialNumber + " - " + PhoneApps.PHONEBOOK +
+                "\n" + PhoneApps.MESSAGES.serialNumber + " - " + PhoneApps.MESSAGES +
+                "\n" + PhoneApps.CALENDER.serialNumber + " - " + PhoneApps.CALENDER + " (Currently unavailable)";
         int counter = 0;
         while (!exit) {
             System.out.println("Welcome to your phone, which app would you like to activate");
-            System.out.println( PhoneApps.EXIT.serialNumber + " - " + PhoneApps.EXIT +
-                    "\n" + PhoneApps.PHONEBOOK.serialNumber + " - " + PhoneApps.PHONEBOOK +
-                    "\n" + PhoneApps.MESSAGES.serialNumber + " - " + PhoneApps.MESSAGES +
-                    "\n" + PhoneApps.CALENDER.serialNumber + " - " + PhoneApps.CALENDER + " (Currently unavailable)");
+            System.out.println(mainMenu);
             String input = mPhoneData.scan.nextLine().trim();
             if (input.equals(String.valueOf(PhoneApps.PHONEBOOK.serialNumber)) || input.equalsIgnoreCase(String.valueOf(PhoneApps.PHONEBOOK))) {
                 runningApp = String.valueOf(PhoneApps.PHONEBOOK);
@@ -110,7 +111,7 @@ public class Main {
         ArrayListOutput(mPhoneData.contactsList, mPhoneData.contactsFileName);
     }
     static void runMessagesApp() {
-        MessageCorrespondence SMS;
+        MessageCorrespondence SMS = new MessageCorrespondence();
         HashMap<Integer, String> menu = messagesApp.generateMessagesAppMenu();
 //        boolean messagesExit = findContactManager();
         boolean messagesExit = false;
@@ -120,12 +121,21 @@ public class Main {
             int menuInput = phoneBook.menuChoice();
             switch (menuInput) {
                 case 1 -> {
-                    messagesExit = findContactManager();
-                    SMS = new MessageCorrespondence(currentContact);
+                    messagesExit = findContactManager();  //TODO keep testing the new contact equals override method
+                    SMS = messagesApp.findCorrespondenceByContact(currentContact);
                     System.out.println("Enter message:");
                     String messageInput = mPhoneData.scan.nextLine();
-                    SMS.sendMessage(messageInput);  // Using the constructor in which no I/O message flag
-                    mPhoneData.allSMS.add(SMS);
+                    if (SMS == null) {
+                        SMS = new MessageCorrespondence(currentContact);
+                        SMS.sendMessage(messageInput);  // Using the constructor in which no I/O message flag
+                        mPhoneData.allSMS.add(SMS);
+                    } else {
+                        int indexInAllSMS = mPhoneData.allSMS.indexOf(SMS);
+                        SMS.sendMessage(messageInput);  // Using the constructor in which no I/O message flag
+                        mPhoneData.allSMS.set(indexInAllSMS, SMS);
+                    }
+
+
                 }
                 case 2 -> {
                     messagesExit = findContactManager();
@@ -160,6 +170,7 @@ public class Main {
                 }
             }
         }
+
         ArrayListOutput(mPhoneData.allSMS, mPhoneData.messagesFileName);
     }
     static int isActionPossibleOnEmptyList(int menuInput) {
@@ -294,7 +305,7 @@ public class Main {
         }
     }
 
-    static void ArrayListOutput(ArrayList<?> list, String fileName) {
+    static void ArrayListOutput(ArrayList<?> list, String fileName) { //TODO not updating the list on the file, fix it
         try {
             FileOutputStream fos = new FileOutputStream(fileName);
             ObjectOutputStream oos = new ObjectOutputStream(fos);

@@ -44,6 +44,6 @@ public class Message implements Serializable {
     }
 
     public String toString() {
-        return getMessageContent() + ", " + getMessageTime();
+        return getMessageContent() + "    " + getMessageTime();
     }
 }

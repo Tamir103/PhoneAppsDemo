@@ -9,10 +9,6 @@ public class setContact {
     static final String OK = "OK";
     static final String FAIL = "FAIL";
 
-//    public setContact() {
-//        mPhoneData = PhoneData.getInstance();
-//    }
-
     /**
      * Setting Contact full name
      *
@@ -172,7 +168,11 @@ public class setContact {
     }
 
     private boolean numOfCharsRestriction(String str, int limit) {
-        return str.length() <= limit;
+        try {
+            return str.length() <= limit;
+        } catch (NullPointerException npe) {
+            return false;
+        }
     }
 
     /**

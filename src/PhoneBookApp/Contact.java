@@ -51,4 +51,13 @@ public class Contact extends setContact implements Serializable {
         return this.phoneNumber;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { return true;}
+        if (obj == null || this.getClass() != obj.getClass()) {return false;}
+        Contact c = (Contact) obj;
+        return this.getFullName().equals(c.getFullName()) && this.companyName.equals(c.getCompanyName())
+                && this.phoneNumber.equals(c.getPhoneNumber());
+    }
+
 }

@@ -38,21 +38,19 @@ public class MessagesAppMethods {
         MessageCorrespondence correspondence = findCorrespondenceByContact(c);
         ArrayList<Message> list = correspondence.getCorrespondence();
         list.removeAll(list);
+        mPhoneData.allSMS.remove(correspondence);
     }
 
-    public boolean isContactDetailsIdentical(Contact c1, Contact c2) {
-        if (c1.getFullName().equals(c2.getFullName()) && c1.getCompanyName().equals(c2.getCompanyName()) && c1.getPhoneNumber().equals(c2.getPhoneNumber())) {
-            return true;
-        }
-        return false;
-    }
     public void printContactMessages(Contact c) {
         for (MessageCorrespondence mc : mPhoneData.allSMS) {
-            if (isContactDetailsIdentical(mc.getContact(), c)) {
+            if (mc.getContact().equals(c)) {
                 int index = mPhoneData.allSMS.indexOf(mc);
-                for (int i = 0; i < mPhoneData.allSMS.get(index).getCorrespondence().size(); i++) {
-                    System.out.println(mPhoneData.allSMS.get(i).getCorrespondence().toString());
-                }
+                System.out.println(mc.getContact().getFullName() + " Messages:");
+                    for (int j = 0; j < mPhoneData.allSMS.get(index).getCorrespondence().size(); j++) {
+                        System.out.println(mPhoneData.allSMS.get(index).getCorrespondence().get(j).toString());
+                    }
+                System.out.println();
+                break;
             }
         }
     }
@@ -76,7 +74,7 @@ public class MessagesAppMethods {
     public void printAllContactsMessages() {
         for (MessageCorrespondence mc : mPhoneData.allSMS) {
             System.out.println(mc.getContact().getFullName() + ": ");
-            for (Message m :mc.getCorrespondence()) {
+            for (Message m : mc.getCorrespondence()) {
                 System.out.println(m.toString());
             }
             System.out.println("-------------------------------");

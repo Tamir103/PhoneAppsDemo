@@ -114,11 +114,9 @@ public class myPhoneBook extends PhoneBookBlueprint {
             Contact c1 = listOfContacts.get(i);
             for (int j = i + 1; j < listOfContacts.size(); j++) {
                 Contact c2 = listOfContacts.get(j);
-                if (c1.getFirstName().equalsIgnoreCase(c2.getFirstName())) {
-                    if (c1.getPhoneNumber().equals(c2.getPhoneNumber())) {
-                        duplicatesList.add(c2);
-                        i++;
-                    }
+                if (c1.equals(c2)) {
+                    duplicatesList.add(c2);
+                    i++;
                 }
             }
         }
@@ -358,16 +356,17 @@ public class myPhoneBook extends PhoneBookBlueprint {
                                     }
                                     break setInfoLoop;
                                 case "Company":
-                                    contact.setCompanyName(splitNameArr[1].trim());
+                                    if (splitNameArr.length > 1) {
+                                        contact.setCompanyName(splitNameArr[1].trim());
+                                    }
                                     break setInfoLoop;
                             }
                         }
                         name = "";
                         phone = "";
+                        importedContactsList = addContact(contact, importedContactsList);
+                        importedContactsList = removeDuplicates(importedContactsList); //TODO debug bug
                     }
-                    importedContactsList = addContact(contact, importedContactsList);
-                    importedContactsList = removeDuplicates(importedContactsList);
-                    break;
                 } catch (FileNotFoundException fnfe) {
                     System.err.println("File Not Found"); //TODO maybe put text in errors map
                 } catch (IOException ioe) {
