@@ -72,12 +72,16 @@ public class MessagesAppMethods {
         System.out.println();
     }
     public void printAllContactsMessages() {
-        for (MessageCorrespondence mc : mPhoneData.allSMS) {
-            System.out.println(mc.getContact().getFullName() + ": ");
-            for (Message m : mc.getCorrespondence()) {
-                System.out.println(m.toString());
+        if(mPhoneData.allSMS.isEmpty()) {
+            System.err.println("All SMS list is empty");
+        } else {
+            for (MessageCorrespondence mc : mPhoneData.allSMS) {
+                System.out.println(mc.getContact().getFullName() + ": ");
+                for (Message m : mc.getCorrespondence()) {
+                    System.out.println(m.toString());
+                }
+                System.out.println("-------------------------------");
             }
-            System.out.println("-------------------------------");
         }
     }
 

@@ -122,6 +122,7 @@ public class Main {
             switch (menuInput) {
                 case 1 -> {
                     messagesExit = findContactManager();  //TODO keep testing the new contact equals override method
+                    if (messagesExit) {break;}
                     SMS = messagesApp.findCorrespondenceByContact(currentContact);
                     System.out.println("Enter message:");
                     String messageInput = mPhoneData.scan.nextLine();
