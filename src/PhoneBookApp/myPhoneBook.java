@@ -14,7 +14,9 @@ public class myPhoneBook extends PhoneBookBlueprint {
     static PhoneData mPhoneData = PhoneData.getInstance();;
     public HashMap<Integer, String> menu;
     public static HashMap<String, String> textsMap = new HashMap<>();
-
+    static ContactInfoTypes NAME = ContactInfoTypes.NAME;
+    static ContactInfoTypes PHONE = ContactInfoTypes.PHONE;
+    static ContactInfoTypes COMPANY = ContactInfoTypes.COMPANY;
     public myPhoneBook() {
         textsMap = generateTexts();
         menu = generatePhoneBookMenu();
@@ -191,11 +193,11 @@ public class myPhoneBook extends PhoneBookBlueprint {
         }
 //        System.out.println("Name: " + c.getFullName());
         System.out.println("Phone Number: " + c.getPhoneNumber());
-        if(c.getCompanyName() != null) System.out.println("Company: " + c.getCompanyName());
-        for(int i = 0; i < 30; i++) {
-            System.out.print("-");
+        if (c.getCompanyName() != null) {
+            System.out.println("Company: " + c.getCompanyName());
+        } else {
+            System.out.println("Company:");
         }
-        System.out.println("*");
     }
 
     /**
@@ -207,6 +209,10 @@ public class myPhoneBook extends PhoneBookBlueprint {
         for (Contact c: listOfContacts) {
             printContact(c);
         }
+        for(int i = 0; i < 30; i++) {
+            System.out.print("-");
+        }
+        System.out.println("*");
     }
 
     /**
@@ -325,52 +331,45 @@ public class myPhoneBook extends PhoneBookBlueprint {
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(fileName));
                     Contact contact = new Contact();
-                    while ((rawLine = reader.readLine()) != null) {
-//                        System.out.println(rawLine);
-                        for (int j = 0; j < rawLine.length(); j++) {
-                            int charValue = rawLine.charAt(j);
-                            String currentChar = Character.toString((char) charValue);
-                            if (((charValue >= 65 && charValue <= 90) || (charValue >= 97 && charValue <= 122) || charValue == 32) || charValue == 58) {
-                                name = name.concat(currentChar);
-                            } else if ((charValue >= 48 && charValue <= 57)) {
-                                phone = phone.concat(currentChar);
-                            }
-                        }
-
-                        String[] splitNameArr = name.split(":");
-                        setInfoLoop:
-                        for (int j = 0; j < splitNameArr.length; j++) {
-                            String nameType = splitNameArr[j].trim();
-                            switch (nameType) {
-                                case "Phone Number":
-                                    contact.setPhoneNumber(phone);
-                                    break setInfoLoop;
-                                case "Name":
-                                    for (int k = 0; k < splitNameArr.length; k++) {
-                                        String name2 = splitNameArr[k].trim();
-                                        switch (k) {
-                                            case 1 -> contact.setFirstName(name2);
-                                            case 2 -> contact.setMiddleName(name2);
-                                            case 3 -> contact.setLastName(name2);
+                    while ((rawLine = reader.readLine()) != null) {  //TODO printing after upload is not good, check it
+                        if (rawLine.contains("Name")) {
+                            contact = new Contact();
+                            String[] splitNameArr = rawLine.split(":");
+                            for (int k = 0; k < splitNameArr.length; k++) {
+                                String name2 = splitNameArr[k].trim();
+                                switch (k) {
+                                    case 1 -> contact.setFirstName(name2);
+                                    case 2 -> {
+                                        if (splitNameArr.length == 4) {
+                                            contact.setMiddleName(name2);
+                                        } else {
+                                            contact.setLastName(name2);
                                         }
                                     }
-                                    break setInfoLoop;
-                                case "Company":
-                                    if (splitNameArr.length > 1) {
-                                        contact.setCompanyName(splitNameArr[1].trim());
-                                    }
-                                    break setInfoLoop;
+                                    case 3 -> contact.setLastName(name2);
+                                }
                             }
+                        } else if (rawLine.contains("Phone Number:")) {
+                            String[] splitNameArr = rawLine.split(":");
+                            contact.setPhoneNumber(splitNameArr[1]);
+                        } else if (rawLine.contains("Company")) {
+                            String[] splitNameArr = rawLine.split(":");
+                            if (splitNameArr.length > 1) {contact.setCompanyName(splitNameArr[1]);}
                         }
-                        name = "";
-                        phone = "";
-                        importedContactsList = addContact(contact, importedContactsList);
-                        importedContactsList = removeContactDuplicates(importedContactsList); //TODO debug bug
+
+                        if (contact.getFirstName() != null && contact.getPhoneNumber() != null) {
+                            importedContactsList = addContact(contact, importedContactsList);
+                            importedContactsList = removeContactDuplicates(importedContactsList);
+                        //    deleteContactInfo(contact);
+                        }
                     }
+                    if (reader.readLine() == null) {break;}
                 } catch (FileNotFoundException fnfe) {
                     System.err.println("File Not Found"); //TODO maybe put text in errors map
                 } catch (IOException ioe) {
                     System.err.println("Error In Reading Phone Book");
+                } catch (Exception e) {
+                    System.err.println("ERROR - Text file data incomplete (must have first name and phone number) or wrongfully formatted");
                 }
             }
             if (i == 2) {
@@ -380,6 +379,14 @@ public class myPhoneBook extends PhoneBookBlueprint {
         return importedContactsList;
     }
 
+    public Contact deleteContactInfo(Contact contact) {
+        contact.setFirstName(null);
+        contact.setMiddleName(null);
+        contact.setLastName(null);
+        contact.setPhoneNumber(null);
+        contact.setCompanyName(null);
+        return contact;
+    }
     @Override
     public int compareTo(Object o) {
         return 0;

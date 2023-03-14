@@ -56,8 +56,14 @@ public class Contact extends setContact implements Serializable {
         if (this == obj) { return true;}
         if (obj == null || this.getClass() != obj.getClass()) {return false;}
         Contact c = (Contact) obj;
-        return this.getFullName().equals(c.getFullName()) && this.companyName.equals(c.getCompanyName())
-                && this.phoneNumber.equals(c.getPhoneNumber());
+        try {
+            if (this.getFullName().equals(c.getFullName()) && this.companyName.equals(c.getCompanyName())
+                    && this.phoneNumber.equals(c.getPhoneNumber())) {return true;}
+            else if (this.phoneNumber.equals(c.getPhoneNumber())) {return true;}
+            else {return false;}
+        } catch (NullPointerException npe) {
+            return this.getFullName().equals(c.getFullName()) && this.phoneNumber.equals(c.getPhoneNumber());
+        }
     }
 
 }

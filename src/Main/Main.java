@@ -19,7 +19,10 @@ public class Main {
     static boolean exit;
     static ArrayList<Contact> validationList;
     public static Contact currentContact;
-
+    static PhoneApps EXIT = PhoneApps.EXIT;
+    static PhoneApps PHONEBOOK = PhoneApps.PHONEBOOK;
+    static PhoneApps MESSAGES = PhoneApps.MESSAGES;
+    static PhoneApps CALENDER = PhoneApps.CALENDER;
     public static void main(String[] args) {
 
     mPhoneData.contactsList = (ArrayList<Contact>) ArrayListInput(mPhoneData.contactsFileName);
@@ -30,10 +33,10 @@ public class Main {
     }
 
     public static void mainPhoneMethod() {
-        String mainMenu =  PhoneApps.EXIT.serialNumber + " - " + PhoneApps.EXIT +
-                "\n" + PhoneApps.PHONEBOOK.serialNumber + " - " + PhoneApps.PHONEBOOK +
-                "\n" + PhoneApps.MESSAGES.serialNumber + " - " + PhoneApps.MESSAGES +
-                "\n" + PhoneApps.CALENDER.serialNumber + " - " + PhoneApps.CALENDER + " (Currently unavailable)";
+        String mainMenu =  EXIT.serialNumber + " - " + EXIT +
+                "\n" + PHONEBOOK.serialNumber + " - " + PHONEBOOK +
+                "\n" + MESSAGES.serialNumber + " - " + MESSAGES +
+                "\n" + CALENDER.serialNumber + " - " + CALENDER + " (Currently unavailable)";
         int counter = 0;
         while (!exit) {
             System.out.println("Welcome to your phone, which app would you like to activate");
