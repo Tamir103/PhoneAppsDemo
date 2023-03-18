@@ -34,6 +34,11 @@ public class MessagesAppMethods {
         }
         return null;
     }
+
+    /**
+     * Deleting a contact correspondence
+     * @param c - Contact Object for correspondence deletion
+     */
     public void deleteContactMessages(Contact c) {
         MessageCorrespondence correspondence = findCorrespondenceByContact(c);
         ArrayList<Message> list = correspondence.getCorrespondence();
@@ -54,6 +59,11 @@ public class MessagesAppMethods {
             }
         }
     }
+
+    /**
+     * Printing contacts names which have a sentence in their message correspondence
+     * @param sentence - sentence to be searched
+     */
     public void printContactsContainingMessageSentence(String sentence) {
         ArrayList<Contact> listOfContacts = new ArrayList<>();
         for (MessageCorrespondence mc : mPhoneData.allSMS) {
@@ -68,6 +78,8 @@ public class MessagesAppMethods {
             for (Contact c : listOfContacts) {
                 System.out.println(c.getFullName());
             }
+        } else {
+            System.out.println("No results found");
         }
         System.out.println();
     }
@@ -85,6 +97,11 @@ public class MessagesAppMethods {
         }
     }
 
+    /**
+     * Extracting contacts from message correspondence objects
+     * @param listOfCorrespondence - List of message correspondence objects to extract from
+     * @return - ArrayList containing contact objects extracted from param
+     */
     public ArrayList<Contact> getAllContactsFromCorrespondenceList(ArrayList<MessageCorrespondence> listOfCorrespondence) {
         ArrayList<Contact> list = new ArrayList<>();
         for (MessageCorrespondence mc : listOfCorrespondence) {
@@ -95,13 +112,17 @@ public class MessagesAppMethods {
 
     public ArrayList<MessageCorrespondence> removeCorrespondenceDuplicatesByContacts(ArrayList<MessageCorrespondence> listOfCorrespondence) {
         ArrayList<Contact> listOfContacts = getAllContactsFromCorrespondenceList(listOfCorrespondence);
+        ArrayList<MessageCorrespondence> toRemove = new ArrayList<>();
+        int counter = 0;
         for (Contact c : listOfContacts) {
             for (MessageCorrespondence mc : listOfCorrespondence) {
                 if (c.equals(mc.getContact())) {
-                    listOfCorrespondence.remove(mc);
+                    counter++;
+                   if(counter > 1) toRemove.add(mc);
                 }
             }
         }
+        listOfCorrespondence.removeAll(toRemove);
         return listOfCorrespondence;
     }
 }

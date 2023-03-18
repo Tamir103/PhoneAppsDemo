@@ -22,7 +22,7 @@ public class Main {
     static PhoneApps EXIT = PhoneApps.EXIT;
     static PhoneApps PHONEBOOK = PhoneApps.PHONEBOOK;
     static PhoneApps MESSAGES = PhoneApps.MESSAGES;
-    static PhoneApps CALENDER = PhoneApps.CALENDER;
+    static PhoneApps CALENDAR = PhoneApps.CALENDAR;
     public static void main(String[] args) {
 
     mPhoneData.contactsList = (ArrayList<Contact>) ArrayListInput(mPhoneData.contactsFileName);
@@ -33,29 +33,29 @@ public class Main {
     }
 
     public static void mainPhoneMethod() {
-        String mainMenu =  EXIT.serialNumber + " - " + EXIT +
-                "\n" + PHONEBOOK.serialNumber + " - " + PHONEBOOK +
-                "\n" + MESSAGES.serialNumber + " - " + MESSAGES +
-                "\n" + CALENDER.serialNumber + " - " + CALENDER + " (Currently unavailable)";
+        String mainMenu =  EXIT.ordinal() + " - " + EXIT +
+                "\n" + PHONEBOOK.ordinal() + " - " + PHONEBOOK +
+                "\n" + MESSAGES.ordinal() + " - " + MESSAGES +
+                "\n" + CALENDAR.ordinal() + " - " + CALENDAR + " (Currently unavailable)";
         int counter = 0;
         while (!exit) {
             System.out.println("Welcome to your phone, which app would you like to activate");
             System.out.println(mainMenu);
             String input = mPhoneData.scan.nextLine().trim();
-            if (input.equals(String.valueOf(PhoneApps.PHONEBOOK.serialNumber)) || input.equalsIgnoreCase(String.valueOf(PhoneApps.PHONEBOOK))) {
-                runningApp = String.valueOf(PhoneApps.PHONEBOOK);
-                removeDuplicatesManager(); //TODO sort this as required in the phoneBookApp
+            if (input.equals(String.valueOf(PHONEBOOK.ordinal())) || input.equalsIgnoreCase(String.valueOf(PHONEBOOK))) {
+                runningApp = String.valueOf(PHONEBOOK);
+                removeDuplicatesManager();
                 runPhoneBookApp();
                 if (exit) {break;}
-            } else if (input.equals(String.valueOf(PhoneApps.MESSAGES.serialNumber)) || input.equalsIgnoreCase(String.valueOf(PhoneApps.MESSAGES))) {
-                runningApp = String.valueOf(PhoneApps.MESSAGES);
+            } else if (input.equals(String.valueOf(MESSAGES.ordinal())) || input.equalsIgnoreCase(String.valueOf(MESSAGES))) {
+                runningApp = String.valueOf(MESSAGES);
                 removeDuplicatesManager();
                 runMessagesApp();
-            } else if (input.equals(String.valueOf(PhoneApps.CALENDER.serialNumber)) || input.equalsIgnoreCase(String.valueOf(PhoneApps.CALENDER))) {
+            } else if (input.equals(String.valueOf(CALENDAR.ordinal())) || input.equalsIgnoreCase(String.valueOf(CALENDAR))) {
                 System.out.println("As mentioned before, this app is currently unavailable");
                 counter++;
                 exit = endMain(counter);
-            } else if (input.equals(String.valueOf(PhoneApps.EXIT.serialNumber)) || input.equalsIgnoreCase(String.valueOf(PhoneApps.EXIT))) {
+            } else if (input.equals(String.valueOf(EXIT.ordinal())) || input.equalsIgnoreCase(String.valueOf(EXIT))) {
                 phoneBook.printTextsFromMap("exit");
                 exit = true;
             } else {
@@ -116,7 +116,6 @@ public class Main {
     static void runMessagesApp() {
         MessageCorrespondence SMS = new MessageCorrespondence();
         HashMap<Integer, String> menu = messagesApp.generateMessagesAppMenu();
-//        boolean messagesExit = findContactManager();
         boolean messagesExit = false;
         while (!messagesExit) {
             System.out.println("WELCOME TO MESSAGES APP");
@@ -124,7 +123,7 @@ public class Main {
             int menuInput = phoneBook.menuChoice();
             switch (menuInput) {
                 case 1 -> {
-                    messagesExit = findContactManager();  //TODO keep testing the new contact equals override method
+                    messagesExit = findContactManager();
                     if (messagesExit) {break;}
                     SMS = messagesApp.findCorrespondenceByContact(currentContact);
                     System.out.println("Enter message:");
@@ -149,8 +148,11 @@ public class Main {
                 }
                 case 3 -> {
                     messagesExit = findContactManager();
-                    if (mPhoneData.allSMS.isEmpty()) {
-                        System.err.println("No messages for this user");
+                    MessageCorrespondence mc =  messagesApp.findCorrespondenceByContact(currentContact);
+                    if (messagesExit) {
+                        System.err.println("Contact not in phone book");
+                    } else if (mc == null) {
+                        System.out.println("No messages associated with this contact");
                     } else {
                         messagesApp.printContactMessages(currentContact);
                     }
@@ -159,7 +161,7 @@ public class Main {
                     System.out.println("Enter the sentence you wish to search:");
                     String sentenceInput = mPhoneData.scan.nextLine();
                     if (sentenceInput.length() < 2) {
-                        System.out.println("Sentence too short, needs to be at least 2 letters");
+                        System.err.println("Sentence too short, needs to be at least 2 letters");
                         System.out.println();
                     } else {
                         messagesApp.printContactsContainingMessageSentence(sentenceInput);
@@ -168,11 +170,10 @@ public class Main {
                 case 5 -> messagesApp.printAllContactsMessages();
                 case 6 -> {
                     messagesExit = true;
-                    exitMethod(messagesExit);
                 }
             }
+            exitMethod(messagesExit);
         }
-
         ArrayListOutput(mPhoneData.allSMS, mPhoneData.messagesFileName);
     }
     static int isActionPossibleOnEmptyList(int menuInput) {
@@ -189,7 +190,7 @@ public class Main {
             return menuInput;
         }
     }
-    // 1
+
     static void addContactManager() {
         Contact contact = phoneBook.createContact();
         int listSizeBeforeAdd = mPhoneData.contactsList.size();
@@ -202,7 +203,10 @@ public class Main {
             phoneBook.printTextsFromMap("actionSuccess");
         }
     }
-    // 2
+
+    /**
+     * Removing contact from contactsList
+     */
     static void removeContactManager() {
         int listSize = mPhoneData.contactsList.size();
         for (int i = 0; i < 3; i++) {
@@ -250,10 +254,10 @@ public class Main {
             if (phoneBook.isOnlyEnglishLetters(name)) {
                 ArrayList<Contact> contactsFound = phoneBook.findContact(mPhoneData.contactsList, name);
                 if (!contactsFound.isEmpty()) {
-                    if (runningApp.equals(String.valueOf(PhoneApps.PHONEBOOK))) {
+                    if (runningApp.equals(String.valueOf(PHONEBOOK))) {
                         phoneBook.printPhoneBook(contactsFound);
                         return true;
-                    } else if (runningApp.equals(String.valueOf(PhoneApps.MESSAGES))) {
+                    } else if (runningApp.equals(String.valueOf(MESSAGES))) {
                         currentContact = contactsFound.get(0);
                         return false;
                     }
@@ -277,10 +281,12 @@ public class Main {
         phoneBook.printPhoneBook(mPhoneData.contactsList);
     }
 
-    // 8
+    /**
+     * Removing duplicates from contactsList or AllSMS list
+     */
     static void removeDuplicatesManager() {
         ArrayList<Contact> duplicatesList;
-        if (runningApp.equals((String.valueOf(PhoneApps.PHONEBOOK)))) {
+        if (runningApp.equals((String.valueOf(PHONEBOOK)))) {
             duplicatesList = phoneBook.findDuplicates(mPhoneData.contactsList);
             mPhoneData.contactsList = phoneBook.removeContactDuplicates(mPhoneData.contactsList);
             if (!duplicatesList.isEmpty()) {
@@ -289,7 +295,7 @@ public class Main {
             } else {
                 System.out.println("No Duplicates Found");
             }
-        } else if (runningApp.equals((String.valueOf(PhoneApps.MESSAGES)))) {
+        } else if (runningApp.equals((String.valueOf(MESSAGES)))) {
             messagesApp.removeCorrespondenceDuplicatesByContacts(mPhoneData.allSMS);
         }
     }
@@ -312,7 +318,12 @@ public class Main {
         }
     }
 
-    static void ArrayListOutput(ArrayList<?> list, String fileName) { //TODO not updating the list on the file, fix it
+    /**
+     * Saves ArrayList to a file using ObjectOutputStream
+     * @param list - ArrayList to be saved
+     * @param fileName - File name for ArrayList to be saved on
+     */
+    static void ArrayListOutput(ArrayList<?> list, String fileName) {
         try {
             FileOutputStream fos = new FileOutputStream(fileName);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -322,6 +333,12 @@ public class Main {
             System.err.println("EXCEPTION DURING LIST FILE OUTPUT");
         }
     }
+
+    /**
+     * Loading an ArrayList from a file
+     * @param fileName - File name or path
+     * @return - ArrayList read from the file or empty list if an exception is thrown
+     */
     static ArrayList<?> ArrayListInput(String fileName) {
         ArrayList<?> list = new ArrayList<>();
         try {

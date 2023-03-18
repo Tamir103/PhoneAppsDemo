@@ -243,7 +243,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
      * @param listOfContacts - Phone book to be exported to txt file
      */
     @Override
-    public void exportPhoneBook(ArrayList<Contact> listOfContacts) { //TODO update to fit new contact requirements
+    public void exportPhoneBook(ArrayList<Contact> listOfContacts) {
         printTextsFromMap("enterFileName");
         String fileName = validateFileName(mPhoneData.scan.nextLine());
         try {
@@ -273,7 +273,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
         }
     }
 
-    public String validateFileName(String fileName) { //TODO update and consider importing relevant validationMethods
+    public String validateFileName(String fileName) {
         String fileFullName;
         if (fileName.contains(".txt")) {
             fileFullName = fileName;
@@ -282,8 +282,12 @@ public class myPhoneBook extends PhoneBookBlueprint {
         }
         File file = new File(fileFullName);
         if (!file.isFile()) {
-            if (fileName.length() <= 15) {
+            if (fileName.length() <= 15 && fileName.length() >= 1) {
                 return fileFullName;
+            } else if (fileName.equals("") || fileName == null) {
+                System.out.println("No name was entered for the file");
+                printTextsFromMap("createRandomFileName");
+                return createRandomPhoneBookName();
             } else {
                 printTextsFromMap("nameTooLong");
                 printTextsFromMap("createRandomFileName");
@@ -331,7 +335,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
                 try {
                     BufferedReader reader = new BufferedReader(new FileReader(fileName));
                     Contact contact = new Contact();
-                    while ((rawLine = reader.readLine()) != null) {  //TODO printing after upload is not good, check it
+                    while ((rawLine = reader.readLine()) != null) {
                         if (rawLine.contains("Name")) {
                             contact = new Contact();
                             String[] splitNameArr = rawLine.split(":");
@@ -360,12 +364,13 @@ public class myPhoneBook extends PhoneBookBlueprint {
                         if (contact.getFirstName() != null && contact.getPhoneNumber() != null) {
                             importedContactsList = addContact(contact, importedContactsList);
                             importedContactsList = removeContactDuplicates(importedContactsList);
-                        //    deleteContactInfo(contact);
+                        } else if (rawLine.contains("-*")) {
+                            deleteContactInfo(contact);
                         }
                     }
                     if (reader.readLine() == null) {break;}
                 } catch (FileNotFoundException fnfe) {
-                    System.err.println("File Not Found"); //TODO maybe put text in errors map
+                    System.err.println("File Not Found");
                 } catch (IOException ioe) {
                     System.err.println("Error In Reading Phone Book");
                 } catch (Exception e) {
