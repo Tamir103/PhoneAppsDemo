@@ -25,12 +25,6 @@ public class PhoneBookAppMethods extends myPhoneBook {
             System.out.print(".");
         }
     }
-    public static void printFrame(int amount) {
-        for (int i = 0; i < amount; i++) {
-            System.out.print("~");
-        }
-        System.out.println();
-    }
 
     /**
      * Getting user choice from menu and validate it

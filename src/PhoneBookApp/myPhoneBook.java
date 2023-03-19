@@ -11,12 +11,10 @@ import java.util.*;
 
 public class myPhoneBook extends PhoneBookBlueprint {
 
-    static PhoneData mPhoneData = PhoneData.getInstance();;
+    static PhoneData mPhoneData = PhoneData.getInstance();
     public HashMap<Integer, String> menu;
     public static HashMap<String, String> textsMap = new HashMap<>();
-    static ContactInfoTypes NAME = ContactInfoTypes.NAME;
-    static ContactInfoTypes PHONE = ContactInfoTypes.PHONE;
-    static ContactInfoTypes COMPANY = ContactInfoTypes.COMPANY;
+
     public myPhoneBook() {
         textsMap = generateTexts();
         menu = generatePhoneBookMenu();
@@ -85,12 +83,16 @@ public class myPhoneBook extends PhoneBookBlueprint {
      */
     @Override
     public Contact createContact() {
-        Contact contact = setContactFullInfo();
-        if (mPhoneData.contactsList.contains(contact.getFullName()) || mPhoneData.contactsList.contains(contact.getPhoneNumber())) {
-            System.out.println("CONTACT ALREADY EXIST IN PHONE BOOK");
+        try {
+            Contact contact = setContactFullInfo();
+            if (mPhoneData.contactsList.contains(contact.getFullName()) || mPhoneData.contactsList.contains(contact.getPhoneNumber())) {
+                System.out.println("CONTACT ALREADY EXIST IN PHONE BOOK");
+                return null;
+            }
+            return contact;
+        } catch (NullPointerException npe) {
             return null;
         }
-        return contact;
 
     }
 
@@ -284,7 +286,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
         if (!file.isFile()) {
             if (fileName.length() <= 15 && fileName.length() >= 1) {
                 return fileFullName;
-            } else if (fileName.equals("") || fileName == null) {
+            } else if (fileName.equals("")) {
                 System.out.println("No name was entered for the file");
                 printTextsFromMap("createRandomFileName");
                 return createRandomPhoneBookName();
@@ -324,7 +326,7 @@ public class myPhoneBook extends PhoneBookBlueprint {
     @Override
     public ArrayList<Contact> importPhoneBook() {
         ArrayList<Contact> importedContactsList = new ArrayList<>();
-        String rawLine, name = "", phone = "";
+        String rawLine;
         for (int i = 0; i < 3; i++) {
             printTextsFromMap("enterFileName");
             String fileName = mPhoneData.scan.nextLine();

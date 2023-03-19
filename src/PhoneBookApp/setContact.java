@@ -4,10 +4,16 @@ import Main.PhoneData;
 
 public class setContact {
 
-    static PhoneData mPhoneData = PhoneData.getInstance();;
+    static PhoneData mPhoneData = PhoneData.getInstance();
     static int limitNumOfChars = 20;
     static final String OK = "OK";
     static final String FAIL = "FAIL";
+    static ContactVars FIRST = ContactVars.FIRST_NAME;
+    static ContactVars MIDDLE = ContactVars.MIDDLE_NAME;
+    static ContactVars LAST = ContactVars.LAST_NAME;
+    static ContactVars COMPANY = ContactVars.COMPANY_NAME;
+    static ContactVars PHONE = ContactVars.PHONE_NUMBER;
+
 
     /**
      * Setting Contact full name
@@ -17,61 +23,92 @@ public class setContact {
      */
     public Contact setContactFullInfo() {
         String firstName, middleName, lastName, phoneNumber, companyName, result = FAIL;
-        String first = "First Name", middle = "Middle Name" , last = "Last Name", company = "Company Name", phone = "Phone Number";
         Contact contact = new Contact();
-        firstName = infoPerTypeInput(first);
-        if (isNamePerTypeValid(first, firstName)) {
+        firstName = infoPerTypeInput(FIRST);
+        if (isNamePerTypeValid(FIRST.strValue, firstName)) {
             contact.setFirstName(firstName);
             result = OK;
         }
-        if (!setContactMessages(first.toUpperCase(), result).equals(OK)) {
+        if (!setContactEnd(FIRST, result).equals(OK)) {
             return null;
         }
-        middleName = infoPerTypeInput(middle);
-        if (isNamePerTypeValid(middle, middleName) && !middleName.equals("middle")) {
+        middleName = infoPerTypeInput(MIDDLE);
+        if (isNamePerTypeValid(MIDDLE.strValue, middleName) && !middleName.equals("middle")) {
             contact.setMiddleName(middleName);
+            result = OK;
+        } else {
+            result = FAIL;
         }
-        if (!setContactMessages(middle.toUpperCase(), result).equals(OK)) {
+        if (!setContactEnd(MIDDLE, result).equals(OK)) {
             return null;
         }
-        lastName = infoPerTypeInput(last);
-        if (isNamePerTypeValid(last, lastName)) {
+        lastName = infoPerTypeInput(LAST);
+        if (isNamePerTypeValid(LAST.strValue, lastName)) {
             contact.setLastName(lastName);
         }
-        if (!setContactMessages(last.toUpperCase(), result).equals(OK)) {
+        if (!setContactEnd(LAST, result).equals(OK)) {
             return null;
         }
-        companyName = infoPerTypeInput(company);
-        if (isNamePerTypeValid(company, companyName)) {
+        companyName = infoPerTypeInput(COMPANY);
+        if (isNamePerTypeValid(COMPANY.strValue, companyName)) {
             contact.setCompanyName(companyName);
         }
-        if (!setContactMessages(company.toUpperCase(), result).equals(OK)) {
+        if (!setContactEnd(COMPANY, result).equals(OK)) {
             return null;
         }
-        phoneNumber = infoPerTypeInput(phone);
-        if (isNamePerTypeValid(phone, phoneNumber)) {
+        phoneNumber = infoPerTypeInput(PHONE);
+        if (isNamePerTypeValid(PHONE.strValue, phoneNumber)) {
             contact.setPhoneNumber(phoneNumber);
             result = OK;
+        } else {
+            result = FAIL;
         }
-        if (!setContactMessages(phone.toUpperCase(), result).equals(OK)) {
+        if (!setContactEnd(PHONE, result).equals(OK)) {
             return null;
         }
         return contact;
     }
 
-     private String setContactMessages(String stage, String result) {
-        if (stage.equals("FIRST NAME") && result.equals(FAIL)) {
-            System.err.println("UNABLE TO SET CONTACT DETAILS, FIRST NAME IS MANDATORY");
-            return FAIL;
-        } else if (stage.equals("PHONE NUMBER") && result.equals(FAIL)) {
-            System.err.println("UNABLE TO SET CONTACT DETAILS, PHONE NUMBER IS MANDATORY");
-            return FAIL;
-        } else {
-            System.out.println(stage + " SET SUCCESSFUL");
-            return OK;
+     private String setContactEnd(ContactVars stage, String result) {
+        switch (stage) {
+            case FIRST_NAME ->  {
+                if (result.equals(FAIL)) {
+                    System.err.println("UNABLE TO SET CONTACT DETAILS, FIRST NAME IS MANDATORY");
+                    return FAIL;
+                }
+            }
+            case MIDDLE_NAME -> {
+                if (result.equals(FAIL)) {
+                    System.out.println("UNABLE TO SET MIDDLE NAME, BUT THAT'S FINE IT'S NOT MANDATORY");
+                    return OK;
+                }
+            }
+            case LAST_NAME -> {
+                if (result.equals(FAIL)) {
+                    System.out.println("UNABLE TO SET LAST NAME, BUT THAT'S FINE IT'S NOT MANDATORY");
+                    return OK;
+                }
+            }
+            case COMPANY_NAME -> {
+                if (result.equals(FAIL)) {
+                    System.out.println("UNABLE TO SET COMPANY NAME, BUT THAT'S FINE IT'S NOT MANDATORY");
+                    return OK;
+                }
+            }
+            case PHONE_NUMBER -> {
+                if (result.equals(FAIL)) {
+                    System.err.println("UNABLE TO SET CONTACT DETAILS, PHONE NUMBER IS MANDATORY");
+                    return FAIL;
+                }
+            }
+            default -> {
+                System.out.println(stage.strValue + " SET SUCCESSFUL");
+                return OK;
+            }
         }
-
-    }
+        System.out.println(stage.strValue + " SET SUCCESSFUL");
+        return OK;
+     }
 
     private boolean isNamePerTypeValid(String nameType, String name) {
         if (!name.equals(FAIL)) {
@@ -85,24 +122,28 @@ public class setContact {
     /**
      * Prompting the user and receiving input from scanner
      *
-     * @param inputType First Name, Middle Name, Last Name, Company Name (only limits number of characters), Phone Number
+     * @param inputType Values of ContactVars enum
      * @return User input if valid, "middle" if middle name invalid, FAIL if input invalid
      */
-    private String infoPerTypeInput(String inputType) {
+    private String infoPerTypeInput(ContactVars inputType) {
         String input;
         for (int i = 0; i < 3; i++) {
-            input = userInputString("Enter contact " + inputType);
-            if (inputType.equals("Phone Number")) {
+            input = userInputString("Enter contact " + inputType.strValue);
+            if (inputType.equals(PHONE)) {
                 String validatedPhone = isPhoneNumberValid(input);
                 if (!(validatedPhone.equals(FAIL))) {
                     return validatedPhone;
                 }
-            } else if (inputType.equals("Company Name")) {
+            } else if (inputType.equals(COMPANY)) {
                 String cleanInput = cleanStringInput(input);
                 if (numOfCharsRestriction(cleanInput, limitNumOfChars)) {
                     return cleanInput;
+                } else if (cleanInput == null || cleanInput.length() == 0){
+                    System.err.println("Empty input");
+                } else {
+                    System.err.println("Input too long, only " + limitNumOfChars + " characters allowed here");
                 }
-            } else if (!inputType.equals("Middle Name")) {
+            } else if (!inputType.equals(MIDDLE)) {
                 String nameValidation = isNameValid(input);
                 if (!nameValidation.equals(FAIL)) {
                     return nameValidation;
@@ -218,13 +259,14 @@ public class setContact {
 
     private String isPhoneNumberValid(String phoneNumber) {
         String postValidation = validatePhone(phoneNumber);
+        String phoneFormatError = "ERROR - Phone number format invalid (should start with 0, and have 9-10 numbers)";
         switch (postValidation) {
             case FAIL -> {
-                System.err.println("ERROR - Phone number format invalid (should start with 0, and have 9-10 numbers), or some characters are not numbers");
+                System.err.println(phoneFormatError + ", or some characters are not numbers");
                 return FAIL;
             }
             case null -> {
-                System.err.println("ERROR - Phone number format invalid (should start with 0, and have 9-10 numbers), or numbers length is invalid");
+                System.err.println(phoneFormatError + ", or numbers length is invalid");
                 return FAIL;
             }
             default -> {
