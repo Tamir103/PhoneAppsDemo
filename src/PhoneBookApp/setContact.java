@@ -2,17 +2,14 @@ package PhoneBookApp;
 
 import Main.PhoneData;
 
+import static PhoneBookApp.ContactVars.*;
+
 public class setContact {
 
     static PhoneData mPhoneData = PhoneData.getInstance();
     static int limitNumOfChars = 20;
     static final String OK = "OK";
     static final String FAIL = "FAIL";
-    static ContactVars FIRST = ContactVars.FIRST_NAME;
-    static ContactVars MIDDLE = ContactVars.MIDDLE_NAME;
-    static ContactVars LAST = ContactVars.LAST_NAME;
-    static ContactVars COMPANY = ContactVars.COMPANY_NAME;
-    static ContactVars PHONE = ContactVars.PHONE_NUMBER;
 
 
     /**
@@ -24,46 +21,46 @@ public class setContact {
     public Contact setContactFullInfo() {
         String firstName, middleName, lastName, phoneNumber, companyName, result = FAIL;
         Contact contact = new Contact();
-        firstName = infoPerTypeInput(FIRST);
-        if (isNamePerTypeValid(FIRST.strValue, firstName)) {
+        firstName = infoPerTypeInput(FIRST_NAME);
+        if (isNamePerTypeValid(FIRST_NAME.strValue, firstName)) {
             contact.setFirstName(firstName);
             result = OK;
         }
-        if (!setContactEnd(FIRST, result).equals(OK)) {
+        if (!setContactEnd(FIRST_NAME, result).equals(OK)) {
             return null;
         }
-        middleName = infoPerTypeInput(MIDDLE);
-        if (isNamePerTypeValid(MIDDLE.strValue, middleName) && !middleName.equals("middle")) {
+        middleName = infoPerTypeInput(MIDDLE_NAME);
+        if (isNamePerTypeValid(MIDDLE_NAME.strValue, middleName) && !middleName.equals("middle")) {
             contact.setMiddleName(middleName);
             result = OK;
         } else {
             result = FAIL;
         }
-        if (!setContactEnd(MIDDLE, result).equals(OK)) {
+        if (!setContactEnd(MIDDLE_NAME, result).equals(OK)) {
             return null;
         }
-        lastName = infoPerTypeInput(LAST);
-        if (isNamePerTypeValid(LAST.strValue, lastName)) {
+        lastName = infoPerTypeInput(LAST_NAME);
+        if (isNamePerTypeValid(LAST_NAME.strValue, lastName)) {
             contact.setLastName(lastName);
         }
-        if (!setContactEnd(LAST, result).equals(OK)) {
+        if (!setContactEnd(LAST_NAME, result).equals(OK)) {
             return null;
         }
-        companyName = infoPerTypeInput(COMPANY);
-        if (isNamePerTypeValid(COMPANY.strValue, companyName)) {
+        companyName = infoPerTypeInput(COMPANY_NAME);
+        if (isNamePerTypeValid(COMPANY_NAME.strValue, companyName)) {
             contact.setCompanyName(companyName);
         }
-        if (!setContactEnd(COMPANY, result).equals(OK)) {
+        if (!setContactEnd(COMPANY_NAME, result).equals(OK)) {
             return null;
         }
-        phoneNumber = infoPerTypeInput(PHONE);
-        if (isNamePerTypeValid(PHONE.strValue, phoneNumber)) {
+        phoneNumber = infoPerTypeInput(PHONE_NUMBER);
+        if (isNamePerTypeValid(PHONE_NUMBER.strValue, phoneNumber)) {
             contact.setPhoneNumber(phoneNumber);
             result = OK;
         } else {
             result = FAIL;
         }
-        if (!setContactEnd(PHONE, result).equals(OK)) {
+        if (!setContactEnd(PHONE_NUMBER, result).equals(OK)) {
             return null;
         }
         return contact;
@@ -129,33 +126,38 @@ public class setContact {
         String input;
         for (int i = 0; i < 3; i++) {
             input = userInputString("Enter contact " + inputType.strValue);
-            if (inputType.equals(PHONE)) {
-                String validatedPhone = isPhoneNumberValid(input);
-                if (!(validatedPhone.equals(FAIL))) {
-                    return validatedPhone;
+            switch (inputType) {
+                case PHONE_NUMBER -> {
+                    String validatedPhone = isPhoneNumberValid(input);
+                    if (!(validatedPhone.equals(FAIL))) {
+                        return validatedPhone;
+                    }
                 }
-            } else if (inputType.equals(COMPANY)) {
-                String cleanInput = cleanStringInput(input);
-                if (numOfCharsRestriction(cleanInput, limitNumOfChars)) {
-                    return cleanInput;
-                } else if (cleanInput == null || cleanInput.length() == 0){
-                    System.err.println("Empty input");
-                } else {
-                    System.err.println("Input too long, only " + limitNumOfChars + " characters allowed here");
+                case COMPANY_NAME -> {
+                    String cleanInput = cleanStringInput(input);
+                    if (numOfCharsRestriction(cleanInput, limitNumOfChars)) {
+                        return cleanInput;
+                    } else if (cleanInput == null || cleanInput.length() == 0) {
+                        System.err.println("Empty input");
+                    } else {
+                        System.err.println("Input too long, only " + limitNumOfChars + " characters allowed here");
+                    }
                 }
-            } else if (!inputType.equals(MIDDLE)) {
-                String nameValidation = isNameValid(input);
-                if (!nameValidation.equals(FAIL)) {
-                    return nameValidation;
-                }
-            } else {
-                String nameValidation = isNameValid(input);
-                if (!input.equals("") && !(input == null)) {
+                case FIRST_NAME, LAST_NAME ->  {
+                    String nameValidation = isNameValid(input);
                     if (!nameValidation.equals(FAIL)) {
                         return nameValidation;
                     }
-                } else if (i == 2) {
-                    return "middle";
+                }
+                case MIDDLE_NAME ->  {
+                    String nameValidation = isNameValid(input);
+                    if (!(input == null) && !input.equals("")) {
+                        if (!nameValidation.equals(FAIL)) {
+                            return nameValidation;
+                        }
+                    } else if (i == 2) {
+                        return "middle";
+                    }
                 }
             }
         }

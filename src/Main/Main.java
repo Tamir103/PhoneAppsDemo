@@ -2,12 +2,14 @@ package Main;
 
 import PhoneBookApp.Contact;
 import PhoneBookApp.PhoneBookAppMethods;
-import SmsApp.*;
+import SmsApp.MessageCorrespondence;
+import SmsApp.MessagesAppMethods;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
+import static Main.PhoneApps.*;
 
 
 public class Main {
@@ -15,21 +17,19 @@ public class Main {
     static PhoneData mPhoneData = PhoneData.getInstance();
     static PhoneBookAppMethods phoneBook = new PhoneBookAppMethods();
     static MessagesAppMethods messagesApp = new MessagesAppMethods();
-    static String runningApp;
+    static PhoneApps runningApp;
     static boolean exit;
     static ArrayList<Contact> validationList;
     public static Contact currentContact;
-    static PhoneApps EXIT = PhoneApps.EXIT;
-    static PhoneApps PHONEBOOK = PhoneApps.PHONEBOOK;
-    static PhoneApps MESSAGES = PhoneApps.MESSAGES;
-    static PhoneApps CALENDAR = PhoneApps.CALENDAR;
+
     public static void main(String[] args) {
 
-    mPhoneData.contactsList = (ArrayList<Contact>) ArrayListInput(mPhoneData.contactsFileName);
-    mPhoneData.allSMS = (ArrayList<MessageCorrespondence>) ArrayListInput(mPhoneData.messagesFileName);
+            //noinspection unchecked
+            mPhoneData.contactsList = (ArrayList<Contact>) ArrayListInput(mPhoneData.contactsFileName);
+            //noinspection unchecked
+            mPhoneData.allSMS = (ArrayList<MessageCorrespondence>) ArrayListInput(mPhoneData.messagesFileName);
 
-    mainPhoneMethod();
-
+            mainPhoneMethod();
     }
 
     public static void mainPhoneMethod() {
@@ -38,37 +38,63 @@ public class Main {
                 "\n" + MESSAGES.ordinal() + " - " + MESSAGES +
                 "\n" + CALENDAR.ordinal() + " - " + CALENDAR + " (Currently unavailable)";
         int counter = 0;
+        mainMenuLoop:
         while (!exit) {
             System.out.println("Welcome to your phone, which app would you like to activate");
             System.out.println(mainMenu);
             String input = mPhoneData.scan.nextLine().trim();
-            if (input.equals(String.valueOf(PHONEBOOK.ordinal())) || input.equalsIgnoreCase(String.valueOf(PHONEBOOK))) {
-                runningApp = String.valueOf(PHONEBOOK);
-                removeDuplicatesManager();
-                runPhoneBookApp();
-                if (exit) {break;}
-            } else if (input.equals(String.valueOf(MESSAGES.ordinal())) || input.equalsIgnoreCase(String.valueOf(MESSAGES))) {
-                runningApp = String.valueOf(MESSAGES);
-                removeDuplicatesManager();
-                runMessagesApp();
-            } else if (input.equals(String.valueOf(CALENDAR.ordinal())) || input.equalsIgnoreCase(String.valueOf(CALENDAR))) {
-                System.out.println("As mentioned before, this app is currently unavailable");
-                counter++;
-                exit = endMain(counter);
-            } else if (input.equals(String.valueOf(EXIT.ordinal())) || input.equalsIgnoreCase(String.valueOf(EXIT))) {
-                phoneBook.printTextsFromMap("exit");
-                exit = true;
-            } else {
-                phoneBook.printTextsFromMap("invalidInputWarn");
-                counter++;
-                exit = endMain(counter);
+            runningApp = whichPhoneAppActivated(input);
+            switch (runningApp) {
+                case PHONEBOOK -> {
+                    removeDuplicatesManager();
+                    runPhoneBookApp();
+                    if (exit) break mainMenuLoop;
+                }
+                case MESSAGES -> {
+                    removeDuplicatesManager();
+                    runMessagesApp();
+                    if (exit) break mainMenuLoop;
+                }
+                case CALENDAR -> {
+                    System.out.println("As mentioned before, this app is currently unavailable");
+                    counter++;
+                    exit = endMain(counter);
+                }
+                case EXIT -> {
+                    phoneBook.printTextsFromMap("exit");
+                    exit = true;
+                }
+                case null -> {
+                    phoneBook.printErrorMessages(1);
+                    counter++;
+                    exit = endMain(counter);
+                }
             }
         }
     }
 
+    static PhoneApps whichPhoneAppActivated(String userChoice) {
+        switch (userChoice.toUpperCase()) {
+            case "0", "EXIT" -> {
+                return EXIT;
+            }
+            case "1", "PHONEBOOK" -> {
+                return PHONEBOOK;
+            }
+            case "2", "MESSAGES" -> {
+                return MESSAGES;
+            }
+            case "3", "CALENDAR" -> {
+                return CALENDAR;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
     static boolean endMain(int counter) {
         if (counter >= 3) {
-            phoneBook.printTextsFromMap("inputErrMsg");
+            phoneBook.printErrorMessages(7);
             phoneBook.printTextsFromMap("exit");
             return true;
         }
@@ -114,7 +140,6 @@ public class Main {
         ArrayListOutput(mPhoneData.contactsList, mPhoneData.contactsFileName);
     }
     static void runMessagesApp() {
-        MessageCorrespondence SMS = new MessageCorrespondence();
         HashMap<Integer, String> menu = messagesApp.generateMessagesAppMenu();
         boolean messagesExit = false;
         while (!messagesExit) {
@@ -125,7 +150,7 @@ public class Main {
                 case 1 -> {
                     messagesExit = findContactManager();
                     if (messagesExit) {break;}
-                    SMS = messagesApp.findCorrespondenceByContact(currentContact);
+                    MessageCorrespondence SMS = messagesApp.findCorrespondenceByContact(currentContact);
                     System.out.println("Enter message:");
                     String messageInput = mPhoneData.scan.nextLine();
                     if (SMS == null) {
@@ -168,9 +193,7 @@ public class Main {
                     }
                 }
                 case 5 -> messagesApp.printAllContactsMessages();
-                case 6 -> {
-                    messagesExit = true;
-                }
+                case 6 -> messagesExit = true;
             }
             exitMethod(messagesExit);
         }
@@ -254,12 +277,15 @@ public class Main {
             if (phoneBook.isOnlyEnglishLetters(name)) {
                 ArrayList<Contact> contactsFound = phoneBook.findContact(mPhoneData.contactsList, name);
                 if (!contactsFound.isEmpty()) {
-                    if (runningApp.equals(String.valueOf(PHONEBOOK))) {
-                        phoneBook.printPhoneBook(contactsFound);
-                        return true;
-                    } else if (runningApp.equals(String.valueOf(MESSAGES))) {
-                        currentContact = contactsFound.get(0);
-                        return false;
+                    switch (runningApp) {
+                        case PHONEBOOK -> {
+                            phoneBook.printPhoneBook(contactsFound);
+                            return true;
+                        }
+                        case MESSAGES -> {
+                            currentContact = contactsFound.get(0);
+                            return false;
+                        }
                     }
                 } else {
                     phoneBook.printErrorMessages(8);
@@ -286,24 +312,20 @@ public class Main {
      */
     static void removeDuplicatesManager() {
         ArrayList<Contact> duplicatesList;
-        if (runningApp.equals((String.valueOf(PHONEBOOK)))) {
-            duplicatesList = phoneBook.findDuplicates(mPhoneData.contactsList);
-            mPhoneData.contactsList = phoneBook.removeContactDuplicates(mPhoneData.contactsList);
-            if (!duplicatesList.isEmpty()) {
-                System.out.println("DUPLICATES REMOVED: ");
-                phoneBook.printPhoneBook(duplicatesList);
-            } else {
-                System.out.println("No Duplicates Found");
+        switch (runningApp) {
+            case PHONEBOOK -> {
+                duplicatesList = phoneBook.findDuplicates(mPhoneData.contactsList);
+                mPhoneData.contactsList = phoneBook.removeContactDuplicates(mPhoneData.contactsList);
+                if (!duplicatesList.isEmpty()) {
+                    System.out.println("DUPLICATES REMOVED: ");
+                    phoneBook.printPhoneBook(duplicatesList);
+                } else {
+                    System.out.println("No Duplicates Found");
+                }
             }
-        } else if (runningApp.equals((String.valueOf(MESSAGES)))) {
-            messagesApp.removeCorrespondenceDuplicatesByContacts(mPhoneData.allSMS);
+            case MESSAGES -> messagesApp.removeCorrespondenceDuplicatesByContacts(mPhoneData.allSMS);
         }
     }
-
-    public static boolean isItemNumValid(int num, Map map) {
-        return num <= map.size() && num > 0;
-    }
-
     static void exitMethod(boolean exit) {
         try {
             if (exit) {
