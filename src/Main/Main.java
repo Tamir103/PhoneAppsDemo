@@ -373,9 +373,8 @@ public class Main {
 //            System.err.println("IO EXCEPTION IN ARRAYLIST INPUT METHOD");
             return list;
         }
-        catch (ClassNotFoundException cnfe) {
+        catch (ClassNotFoundException cnf) {
 //            System.out.println("ClassNotFoundException EXCEPTION IN ARRAYLIST INPUT METHOD");
-            cnfe.printStackTrace();
             return list;
         }
         return list;
